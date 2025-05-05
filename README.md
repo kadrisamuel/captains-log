@@ -10,6 +10,7 @@ A React Native mobile application for timestamped voice to text recording of sma
 
 ## Screenshots
 
+![Alt text](first_two_views.png)
 
 # Getting Started
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
