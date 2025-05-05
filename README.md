@@ -1,6 +1,18 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Captain's Log
+
+A React Native mobile application for timestamped voice to text recording of small notes.
+
+## Features
+
+- [Key feature 1]
+- [Key feature 2]
+- [Key feature 3]
+
+## Screenshots
+
 
 # Getting Started
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
@@ -77,11 +89,6 @@ When you want to forcefully reload, for example to reset the state of your app, 
 
 You've successfully run and modified your React Native App. :partying_face:
 
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
 # Troubleshooting
 
 If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
@@ -95,3 +102,47 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+## Project Structure
+
+```
+captains-log/
+├── android/          # Android native code
+├── ios/              # iOS native code
+├── src/
+│   ├── components/   # Reusable components
+│   ├── screens/      # Screen components
+│   ├── navigation/   # Navigation configurations
+│   ├── services/     # API calls and other services
+│   ├── utils/        # Utility functions
+│   ├── assets/       # Images, fonts, etc.
+│   └── App.js        # Entry point
+└── [other config files]
+```
+
+## Technologies Used
+
+- React Native
+- [Any additional libraries like Redux, React Navigation, etc.]
+
+## Roadmap
+
+- [Future feature or enhancement 1]
+- [Future feature or enhancement 2]
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the [LICENSE_NAME] - see the LICENSE file for details.
+
+## Acknowledgments
+
+- [Credit any resources, tutorials, or inspiration]
