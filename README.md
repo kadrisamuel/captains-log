@@ -118,7 +118,7 @@ captains-log/
 │   ├── services/     # API calls and other services
 │   ├── utils/        # Utility functions
 │   ├── assets/       # Images, fonts, etc.
-│   └── App.js        # Entry point
+│   └── App.tsx        # Entry point
 └── [other config files]
 ```
 
