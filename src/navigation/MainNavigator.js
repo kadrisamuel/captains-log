@@ -1,10 +1,11 @@
 // src/navigation/MainNavigator.js
 import React from 'react';
-import { View, Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View, Text } from 'react-native';
 
-import Home from '../screens/HomeScreen'; 
+// Import screens
+import HomeScreen from '../screens/HomeScreen';
 import LogsScreen from '../screens/LogsScreen';
 import LogDetailScreen from '../screens/LogDetailScreen';
 import NewLogScreen from '../screens/NewLogScreen';
@@ -17,6 +18,7 @@ const Icon = ({ name }) => (
   </View>
 );
 
+// Create navigators
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -42,7 +44,7 @@ const BottomTabNavigator = () => {
     >
       <Tab.Screen 
         name="Home" 
-        component={Home} 
+        component={HomeScreen} 
         options={{
           tabBarIcon: ({ color }) => <Icon name="Home" color={color} />,
           headerTitle: "Captain's Log",
@@ -60,8 +62,8 @@ const BottomTabNavigator = () => {
   );
 };
 
-// Home stack with tabs
-const HomeStack = () => {
+// Main navigator
+const MainNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -75,9 +77,9 @@ const HomeStack = () => {
       }}
     >
       <Stack.Screen 
-        name="Back" 
+        name="TabHome" 
         component={BottomTabNavigator} 
-        options={{ headerShown: false }} 
+        options={{ headerShown: false, title: "Back" }} 
       />
       <Stack.Screen 
         name="LogDetail" 
@@ -96,11 +98,6 @@ const HomeStack = () => {
       />
     </Stack.Navigator>
   );
-};
-
-// Main navigator
-const MainNavigator = () => {
-  return <HomeStack />;
 };
 
 export default MainNavigator;
