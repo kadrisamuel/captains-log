@@ -1,40 +1,182 @@
 // src/screens/LogsScreen.js
-import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+  RefreshControl,
+  ActivityIndicator
+} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { LogStorage } from '../services/LogStorage';
 
-const LogsScreen = ({ navigation }) => {
-  // Dummy data - replace with your actual data source
-  const logs = [
-    { id: '1', title: 'First Day at Sea', date: '2025-04-15', preview: 'Smooth sailing today...' },
-    { id: '2', title: 'Storm Approaching', date: '2025-04-14', preview: 'Weather forecast indicates...' },
-    { id: '3', title: 'Engine Maintenance', date: '2025-04-13', preview: 'Performed routine check on...' },
-  ];
+const LogsListScreen = ({ navigation }) => {
+  const [logs, setLogs] = useState([]);
+  const [filteredLogs, setFilteredLogs] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Load logs when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadLogs();
+    }, [])
+  );
+
+  const loadLogs = async () => {
+    try {
+      setIsLoading(true);
+      const allLogs = await LogStorage.getAllLogs();
+      setLogs(allLogs);
+      setFilteredLogs(allLogs);
+    } catch (error) {
+      console.error('Error loading logs:', error);
+      Alert.alert('Error', 'Failed to load logs');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    await loadLogs();
+    setIsRefreshing(false);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query.trim() === '') {
+      setFilteredLogs(logs);
+    } else {
+      const filtered = logs.filter(log =>
+        log.title.toLowerCase().includes(query.toLowerCase()) ||
+        log.content.toLowerCase().includes(query.toLowerCase()) ||
+        log.location.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredLogs(filtered);
+    }
+  };
+
+  const handleDeleteLog = (logId, logTitle) => {
+    Alert.alert(
+      'Delete Log',
+      `Are you sure you want to delete "${logTitle}"?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await LogStorage.deleteLog(logId);
+              await loadLogs();
+              Alert.alert('Success', 'Log deleted successfully');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to delete log');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
 
   const renderLogItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.logItem}
-      onPress={() => navigation.navigate('LogDetail', { logId: item.id })}
-    >
-      <Text style={styles.logTitle}>{item.title}</Text>
-      <Text style={styles.logDate}>{item.date}</Text>
-      <Text style={styles.logPreview}>{item.preview}</Text>
-    </TouchableOpacity>
+    <View style={styles.logItem}>
+      <TouchableOpacity
+        style={styles.logContent}
+        onPress={() => navigation.navigate('LogDetail', { logId: item.id })}
+      >
+        <Text style={styles.logTitle}>{item.title}</Text>
+        {item.location ? (
+          <Text style={styles.logLocation}>📍 {item.location}</Text>
+        ) : null}
+        <Text style={styles.logPreview} numberOfLines={2}>
+          {item.content}
+        </Text>
+        <Text style={styles.logDate}>
+          {formatDate(item.createdAt)}
+        </Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => handleDeleteLog(item.id, item.title)}
+      >
+        <Text style={styles.deleteButtonText}>🗑️</Text>
+      </TouchableOpacity>
+    </View>
   );
+
+  const renderEmptyState = () => (
+    <View style={styles.emptyState}>
+      <Text style={styles.emptyStateText}>No logs found</Text>
+      <Text style={styles.emptyStateSubtext}>
+        {searchQuery ? 'Try a different search term' : 'Create your first log entry!'}
+      </Text>
+      {!searchQuery && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => navigation.navigate('NewLog')}
+        >
+          <Text style={styles.fabText}>+</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#075985" />
+        <Text style={styles.loadingText}>Loading logs...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search logs..."
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+      </View>
+
       <FlatList
-        data={logs}
+        data={filteredLogs}
+        keyExtractor={(item) => item.id}
         renderItem={renderLogItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={renderEmptyState}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            colors={['#075985']}
+          />
+        }
+        contentContainerStyle={filteredLogs.length === 0 ? styles.emptyContainer : null}
       />
-      <TouchableOpacity 
-        style={styles.fab}
-        onPress={() => navigation.navigate('NewLog')}
-      >
-        <Text style={styles.fabText}>+</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => navigation.navigate('NewLog')}
+        >
+          <Text style={styles.fabText}>+</Text>
+        </TouchableOpacity>
     </View>
   );
 };
@@ -44,36 +186,122 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f0f9ff',
   },
-  listContent: {
+  header: {
+    flexDirection: 'row',
     padding: 16,
+    paddingBottom: 8,
+    gap: 12,
+  },
+  searchInput: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+  },
+  addButton: {
+    backgroundColor: '#075985',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    justifyContent: 'center',
+  },
+  addButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   logItem: {
+    flexDirection: 'row',
     backgroundColor: 'white',
-    padding: 20,
+    marginHorizontal: 16,
+    marginVertical: 4,
     borderRadius: 8,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    overflow: 'hidden',
+  },
+  logContent: {
+    flex: 1,
+    padding: 16,
   },
   logTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#075985',
-    marginBottom: 8,
+    color: '#1e293b',
+    marginBottom: 4,
   },
-  logDate: {
+  logLocation: {
     fontSize: 14,
     color: '#64748b',
     marginBottom: 8,
   },
   logPreview: {
-    fontSize: 16,
-    color: '#334155',
+    fontSize: 14,
+    color: '#475569',
+    lineHeight: 20,
+    marginBottom: 8,
   },
-  fab: {
+  logDate: {
+    fontSize: 12,
+    color: '#94a3b8',
+  },
+  deleteButton: {
+    width: 60,
+    backgroundColor: '#ef4444',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    fontSize: 20,
+  },
+  emptyContainer: {
+    flex: 1,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 32,
+  },
+  emptyStateText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#64748b',
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 16,
+    color: '#94a3b8',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  createButton: {
+    backgroundColor: '#075985',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  createButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f9ff',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#64748b',
+  },
+    fab: {
     position: 'absolute',
     width: 56,
     height: 56,
@@ -95,4 +323,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LogsScreen;
+export default LogsListScreen;

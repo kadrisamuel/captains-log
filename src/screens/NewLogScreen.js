@@ -8,19 +8,64 @@ import {
   TouchableOpacity, 
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
+import { LogStorage } from '../services/LogStorage';
 
 const NewLogScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
-  const saveLog = () => {
-    // Here you would save the log to your data store
-    // For now, we'll just navigate back
-    console.log({ title, location, content });
-    navigation.goBack();
+  const saveLog = async () => {
+    // Validate input
+    if (!title.trim()) {
+      Alert.alert('Error', 'Please enter a title for your log entry.');
+      return;
+    }
+
+    if (!content.trim()) {
+      Alert.alert('Error', 'Please enter some content for your log entry.');
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const logData = {
+        title: title.trim(),
+        location: location.trim(),
+        content: content.trim()
+      };
+
+      const savedLog = await LogStorage.saveLog(logData);
+      
+      Alert.alert(
+        'Success', 
+        'Log entry saved successfully!',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              // Clear form and navigate back
+              setTitle('');
+              setLocation('');
+              setContent('');
+              navigation.goBack();
+            }
+          }
+        ]
+      );
+      
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save log entry. Please try again.');
+      console.error('Save log error:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -30,12 +75,13 @@ const NewLogScreen = ({ navigation }) => {
     >
       <ScrollView style={styles.container}>
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Title</Text>
+          <Text style={styles.label}>Title *</Text>
           <TextInput
             style={styles.input}
             value={title}
             onChangeText={setTitle}
             placeholder="Enter log title"
+            editable={!isSaving}
           />
         </View>
         
@@ -47,12 +93,13 @@ const NewLogScreen = ({ navigation }) => {
               value={location}
               onChangeText={setLocation}
               placeholder="Freeform text"
+              editable={!isSaving}
             />
           </View>
         </View>
         
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Log Entry</Text>
+          <Text style={styles.label}>Log Entry *</Text>
           <TextInput
             style={styles.textArea}
             value={content}
@@ -61,14 +108,23 @@ const NewLogScreen = ({ navigation }) => {
             multiline
             numberOfLines={10}
             textAlignVertical="top"
+            editable={!isSaving}
           />
         </View>
         
         <TouchableOpacity 
-          style={styles.button}
+          style={[styles.button, isSaving && styles.buttonDisabled]}
           onPress={saveLog}
+          disabled={isSaving}
         >
-          <Text style={styles.buttonText}>Save Log Entry</Text>
+          {isSaving ? (
+            <View style={styles.buttonContent}>
+              <ActivityIndicator color="white" size="small" />
+              <Text style={[styles.buttonText, { marginLeft: 8 }]}>Saving...</Text>
+            </View>
+          ) : (
+            <Text style={styles.buttonText}>Save Log Entry</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -117,6 +173,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 30,
+  },
+  buttonDisabled: {
+    backgroundColor: '#94a3b8',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',

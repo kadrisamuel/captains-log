@@ -1,38 +1,164 @@
 // src/screens/LogDetailScreen.js
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  Share
+} from 'react-native';
+import { LogStorage } from '../services/LogStorage';
 
-const LogDetailScreen = ({ route }) => {
-  // In a real app, you'd fetch the log details based on the ID
+const LogDetailScreen = ({ route, navigation }) => {
   const { logId } = route.params;
-  
-  // Dummy data for demonstration
-  const logData = {
-    id: logId,
-    title: 'First Day at Sea',
-    date: '2025-04-15',
-    location: 'Stockholm Harbor',
-    content: 'Today marks our first day of the journey. The crew is in good spirits and the weather has been exceptionally cooperative. We departed from the harbor at 0600 hours, with clear skies and a gentle breeze.\n\nThe ship is performing admirably after the recent maintenance. Engine readings are all within optimal parameters. We expect to reach our first checkpoint by tomorrow evening if conditions hold.\n\nFirst Officer Williams conducted a thorough safety drill, and I\'m pleased to report that all crew members responded efficiently. Response time has improved by 12% compared to our last voyage.\n\nWill make another entry tomorrow with our progress update.'
+  const [log, setLog] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadLog();
+  }, [logId]);
+
+  const loadLog = async () => {
+    try {
+      setIsLoading(true);
+      const logData = await LogStorage.getLogById(logId);
+      if (logData) {
+        setLog(logData);
+      } else {
+        Alert.alert('Error', 'Log not found', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error loading log:', error);
+      Alert.alert('Error', 'Failed to load log');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Log',
+      `Are you sure you want to delete "${log.title}"?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await LogStorage.deleteLog(logId);
+              Alert.alert('Success', 'Log deleted successfully', [
+                { text: 'OK', onPress: () => navigation.goBack() }
+              ]);
+            } catch (error) {
+              Alert.alert('Error', 'Failed to delete log');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleShare = async () => {
+    try {
+      const shareContent = `${log.title}\n\n${log.location ? `Location: ${log.location}\n\n` : ''}${log.content}\n\nCreated: ${formatDate(log.createdAt)}`;
+      
+      await Share.share({
+        message: shareContent,
+        title: log.title,
+      });
+    } catch (error) {
+      console.error('Error sharing log:', error);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#075985" />
+        <Text style={styles.loadingText}>Loading log...</Text>
+      </View>
+    );
+  }
+
+  if (!log) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Log not found</Text>
+      </View>
+    );
+  }
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}>{logData.title}</Text>
-        <Text style={styles.date}>{logData.date}</Text>
-      </View>
-      
-      <View style={styles.metadataContainer}>
-        <View style={styles.metadataItem}>
-          <Text style={styles.metadataLabel}>Location</Text>
-          <Text style={styles.metadataValue}>{logData.location}</Text>
+    <View style={styles.container}>
+      <ScrollView style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>{log.title}</Text>
+          
+          {log.location ? (
+            <View style={styles.locationContainer}>
+              <Text style={styles.locationIcon}>📍</Text>
+              <Text style={styles.location}>{log.location}</Text>
+            </View>
+          ) : null}
+          
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateLabel}>Created:</Text>
+            <Text style={styles.date}>{formatDate(log.createdAt)}</Text>
+          </View>
+          
+          {log.updatedAt !== log.createdAt && (
+            <View style={styles.dateContainer}>
+              <Text style={styles.dateLabel}>Updated:</Text>
+              <Text style={styles.date}>{formatDate(log.updatedAt)}</Text>
+            </View>
+          )}
         </View>
+
+        <View style={styles.contentContainer}>
+          <Text style={styles.contentText}>{log.content}</Text>
+        </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={[styles.button, styles.shareButton]}
+          onPress={handleShare}
+        >
+          <Text style={styles.shareButtonText}>Share</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.button, styles.editButton]}
+          onPress={() => navigation.navigate('EditLog', { logId: log.id })}
+        >
+          <Text style={styles.editButtonText}>Edit</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={[styles.button, styles.deleteButton]}
+          onPress={handleDelete}
+        >
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </TouchableOpacity>
       </View>
-      
-      <View style={styles.contentContainer}>
-        <Text style={styles.content}>{logData.content}</Text>
-      </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -41,52 +167,122 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f0f9ff',
   },
-  headerContainer: {
-    padding: 20,
+  content: {
+    flex: 1,
+  },
+  header: {
     backgroundColor: 'white',
+    padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#e2e8f0',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#075985',
-    marginBottom: 8,
+    color: '#1e293b',
+    marginBottom: 12,
   },
-  date: {
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  locationIcon: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  location: {
     fontSize: 16,
     color: '#64748b',
-  },
-  metadataContainer: {
-    backgroundColor: 'white',
-    padding: 15,
-    marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  metadataItem: {
     flex: 1,
   },
-  metadataLabel: {
-    fontSize: 14,
-    color: '#64748b',
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 4,
   },
-  metadataValue: {
-    fontSize: 16,
-    color: '#334155',
+  dateLabel: {
+    fontSize: 14,
+    color: '#94a3b8',
     fontWeight: '500',
+    marginRight: 8,
+  },
+  date: {
+    fontSize: 14,
+    color: '#64748b',
   },
   contentContainer: {
     backgroundColor: 'white',
+    margin: 16,
     padding: 20,
-    minHeight: 400,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
-  content: {
+  contentText: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#334155',
-  }
+    color: '#374151',
+  },
+  footer: {
+    flexDirection: 'row',
+    padding: 16,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderTopColor: '#e2e8f0',
+    gap: 12,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  shareButton: {
+    backgroundColor: '#10b981',
+  },
+  shareButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  editButton: {
+    backgroundColor: '#075985',
+  },
+  editButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  deleteButton: {
+    backgroundColor: '#ef4444',
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f9ff',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#64748b',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f9ff',
+  },
+  errorText: {
+    fontSize: 18,
+    color: '#ef4444',
+  },
 });
 
 export default LogDetailScreen;
