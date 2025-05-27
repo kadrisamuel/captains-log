@@ -11,8 +11,7 @@ const LogDetailScreen = ({ route }) => {
     id: logId,
     title: 'First Day at Sea',
     date: '2025-04-15',
-    weather: 'Sunny, light winds',
-    location: 'N 34° 05\' W 118° 22\'',
+    location: 'Stockholm Harbor',
     content: 'Today marks our first day of the journey. The crew is in good spirits and the weather has been exceptionally cooperative. We departed from the harbor at 0600 hours, with clear skies and a gentle breeze.\n\nThe ship is performing admirably after the recent maintenance. Engine readings are all within optimal parameters. We expect to reach our first checkpoint by tomorrow evening if conditions hold.\n\nFirst Officer Williams conducted a thorough safety drill, and I\'m pleased to report that all crew members responded efficiently. Response time has improved by 12% compared to our last voyage.\n\nWill make another entry tomorrow with our progress update.'
   };
 
@@ -24,10 +23,6 @@ const LogDetailScreen = ({ route }) => {
       </View>
       
       <View style={styles.metadataContainer}>
-        <View style={styles.metadataItem}>
-          <Text style={styles.metadataLabel}>Weather</Text>
-          <Text style={styles.metadataValue}>{logData.weather}</Text>
-        </View>
         <View style={styles.metadataItem}>
           <Text style={styles.metadataLabel}>Location</Text>
           <Text style={styles.metadataValue}>{logData.location}</Text>

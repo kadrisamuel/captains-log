@@ -41,23 +41,13 @@ const NewLogScreen = ({ navigation }) => {
         </View>
         
         <View style={styles.row}>
-          <View style={[styles.formGroup, { flex: 1, marginRight: 10 }]}>
-            <Text style={styles.label}>Weather</Text>
-            <TextInput
-              style={styles.input}
-              value={weather}
-              onChangeText={setWeather}
-              placeholder="Current weather"
-            />
-          </View>
-          
           <View style={[styles.formGroup, { flex: 1 }]}>
             <Text style={styles.label}>Location</Text>
             <TextInput
               style={styles.input}
               value={location}
               onChangeText={setLocation}
-              placeholder="Current coordinates"
+              placeholder="Freeform text"
             />
           </View>
         </View>
