@@ -13,14 +13,13 @@ import {
 
 const NewLogScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
-  const [weather, setWeather] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
 
   const saveLog = () => {
     // Here you would save the log to your data store
     // For now, we'll just navigate back
-    console.log({ title, weather, location, content });
+    console.log({ title, location, content });
     navigation.goBack();
   };
 
