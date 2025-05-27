@@ -58,6 +58,14 @@ const BottomTabNavigator = () => {
           headerTitle: "All Logs",
         }}
       />
+      <Tab.Screen 
+        name="Settings" 
+        component={SettingsScreen}
+        options={{
+          tabBarIcon: ({ color }) => <Icon name="Settings" color={color} />,
+          headerTitle: "Settings",
+        }}
+      />
     </Tab.Navigator>
   );
 };
