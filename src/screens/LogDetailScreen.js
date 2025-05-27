@@ -179,8 +179,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1e293b',
-    marginBottom: 12,
+    color: '#075985',
+    marginBottom: 8,
   },
   locationContainer: {
     flexDirection: 'row',
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 0,
   },
   dateLabel: {
     fontSize: 14,
@@ -213,16 +213,14 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     backgroundColor: 'white',
-    margin: 16,
     padding: 20,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+    marginTop: 10,
+    minHeight: 400,
   },
   contentText: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#374151',
+    color: '#334155',
   },
   footer: {
     flexDirection: 'row',
