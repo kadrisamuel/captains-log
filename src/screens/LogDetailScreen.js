@@ -227,6 +227,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     padding: 16,
+    marginBottom: 20,
     backgroundColor: 'white',
     borderTopWidth: 1,
     borderTopColor: '#e2e8f0',
