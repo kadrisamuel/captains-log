@@ -77,6 +77,11 @@ const LogDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  // TODO: Implement edit functionality
+  const handleEdit = () => {
+    //navigation.navigate('EditLog', { logId: log.id });
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -146,7 +151,7 @@ const LogDetailScreen = ({ route, navigation }) => {
         
         <TouchableOpacity
           style={[styles.button, styles.editButton]}
-          onPress={() => navigation.navigate('EditLog', { logId: log.id })}
+          onPress={handleEdit}
         >
           <Text style={styles.editButtonText}>Edit</Text>
         </TouchableOpacity>
