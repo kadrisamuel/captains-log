@@ -7,20 +7,28 @@ const HomeScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Captain's Log</Text>
       <Text style={styles.subtitle}>Record your journey</Text>
-      
-      <TouchableOpacity 
-        style={styles.button}
-        onPress={() => navigation.navigate('NewLog')}
-      >
-        <Text style={styles.buttonText}>Create New Log</Text>
-      </TouchableOpacity>
-      
+
       <TouchableOpacity 
         style={[styles.button, styles.secondaryButton]}
         onPress={() => navigation.navigate('Logs')}
       >
         <Text style={styles.buttonText}>View All Logs</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => navigation.navigate('NewLog')}
+      >
+        <Text style={styles.buttonText}>New Manual Log</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={() => navigation.navigate('NewLog')}
+      >
+        <Text style={styles.buttonText}>Record Voice Log</Text>
+      </TouchableOpacity>
+
     </View>
   );
 };
