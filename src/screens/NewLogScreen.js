@@ -22,10 +22,10 @@ const NewLogScreen = ({ navigation }) => {
 
   const saveLog = async () => {
     // Validate input
-    if (!title.trim()) {
+    /*if (!title.trim()) {
       Alert.alert('Error', 'Please enter a title for your log entry.');
       return;
-    }
+    }*/
 
     if (!content.trim()) {
       Alert.alert('Error', 'Please enter some content for your log entry.');
@@ -36,7 +36,7 @@ const NewLogScreen = ({ navigation }) => {
 
     try {
       const logData = {
-        title: title.trim(),
+        //title: title.trim(),
         location: location.trim(),
         content: content.trim()
       };
@@ -51,7 +51,7 @@ const NewLogScreen = ({ navigation }) => {
             text: 'OK',
             onPress: () => {
               // Clear form and navigate back
-              setTitle('');
+              //setTitle('');
               setLocation('');
               setContent('');
               navigation.goBack();
@@ -74,7 +74,7 @@ const NewLogScreen = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView style={styles.container}>
-        <View style={styles.formGroup}>
+{/*         <View style={styles.formGroup}>
           <Text style={styles.label}>Title *</Text>
           <TextInput
             style={styles.input}
@@ -83,7 +83,7 @@ const NewLogScreen = ({ navigation }) => {
             placeholder="Enter log title"
             editable={!isSaving}
           />
-        </View>
+        </View> */}
         
         <View style={styles.row}>
           <View style={[styles.formGroup, { flex: 1 }]}>

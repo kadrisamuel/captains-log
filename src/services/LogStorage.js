@@ -11,7 +11,7 @@ export class LogStorage {
       // Create log object with timestamp and unique ID
       const log = {
         id: Date.now().toString(), // Simple ID generation
-        title: logData.title,
+        //title: logData.title,
         location: logData.location,
         content: logData.content,
         createdAt: new Date().toISOString(),
@@ -102,7 +102,7 @@ export class LogStorage {
       const lowercaseQuery = query.toLowerCase();
       
       return logs.filter(log => 
-        log.title.toLowerCase().includes(lowercaseQuery) ||
+        //log.title.toLowerCase().includes(lowercaseQuery) ||
         log.content.toLowerCase().includes(lowercaseQuery) ||
         log.location.toLowerCase().includes(lowercaseQuery)
       );
