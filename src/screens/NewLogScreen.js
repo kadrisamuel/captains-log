@@ -13,7 +13,7 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { LogStorage } from '../services/LogStorage';
-import { SpeechToText } from '../services/SpeechToText';
+import SpeechToText from '../services/SpeechToText';
 
 const NewLogScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
@@ -22,9 +22,19 @@ const NewLogScreen = ({ navigation }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
 
+  const onSpeechResults = (results) => {
+    // results is usually an array of recognized phrases
+    setContent(results && results.length > 0 ? results[0] : '');
+  };
+
+  const onSpeechError = (error) => {
+    Alert.alert('Speech Recognition Error', error?.message || 'Unknown error');
+  };
+
   const startRecording = async () => {
     try {
-      await SpeechToText.startListening();
+      await SpeechToText.startListening(onSpeechResults, onSpeechError);
+      setIsRecording(true);
     } catch (error) {
       console.error('Error starting recording:', error);
     }
@@ -32,9 +42,8 @@ const NewLogScreen = ({ navigation }) => {
 
   const stopRecording = async () => {
     try {
-      const result = await SpeechToText.stopListening();
-      setContent(result);
-      saveLog(); // Automatically save after recording
+      await SpeechToText.stopListening();
+      setIsRecording(false);
     } catch (error) {
       console.error('Error stopping recording:', error);
     }
@@ -46,7 +55,6 @@ const NewLogScreen = ({ navigation }) => {
     } else {
       startRecording();
     }
-    setIsRecording(!isRecording);
   };
 
   const saveLog = async () => {
