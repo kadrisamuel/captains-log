@@ -127,6 +127,19 @@ const NewLogScreen = ({ navigation }) => {
           )}
         </TouchableOpacity>
       </ScrollView>
+      <TouchableOpacity
+          style={[styles.recordButton, isSaving && styles.recordButtonDisabled]}
+          onPress={saveLog}
+          disabled={isSaving}>
+          {isSaving ? (
+            <View style={styles.recordButtonContent}>
+              <ActivityIndicator color="white" size="small" />
+              <Text style={[styles.recordButtonText, { marginLeft: 8 }]}>Saving...</Text>
+            </View>
+          ) : (
+            <Text style={styles.recordButtonText}>Record</Text>
+          )}
+        </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
@@ -185,7 +198,35 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  }
+  },
+    recordButton: {
+    position: 'absolute',
+    width: '20%',
+    height: '10%',
+    left: '50%',
+    transform: [{ translateX: -35 }],
+    alignItems: 'center',
+    justifyContent: 'center',
+    bottom: '10%',
+    backgroundColor: '#ef4444',
+    borderRadius: '50%',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  recordButtonText: {
+    fontSize: 24,
+    color: 'white',
+  },
+  recordButtonDisabled: {
+    backgroundColor: '#94a3b8',
+  },
+  recordButtonContent: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
 });
 
 export default NewLogScreen;
