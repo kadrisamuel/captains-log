@@ -23,8 +23,8 @@ const NewLogScreen = ({ navigation }) => {
   const [isRecording, setIsRecording] = useState(false);
 
   const onSpeechResults = (results) => {
-    // results is usually an array of recognized phrases
-    setContent(results && results.length > 0 ? results[0] : '');
+    // Join all recognized phrases with a space (or any separator you prefer)
+    setContent(results && results.length > 0 ? results.join(' ') : '');
   };
 
   const onSpeechError = (error) => {
@@ -168,15 +168,17 @@ const NewLogScreen = ({ navigation }) => {
       <TouchableOpacity
           style={[styles.recordButton, isSaving && styles.recordButtonDisabled]}
           onPress={toggleRecording}
-          onP
-          disabled={isSaving}>
+          disabled={isSaving}
+        >
           {isSaving ? (
             <View style={styles.recordButtonContent}>
               <ActivityIndicator color="white" size="small" />
               <Text style={[styles.recordButtonText, { marginLeft: 8 }]}>Saving...</Text>
             </View>
           ) : (
-            <Text style={styles.recordButtonText}>Record</Text>
+            <Text style={styles.recordButtonText}>
+              {isRecording ? 'Stop' : 'Record'}
+            </Text>
           )}
         </TouchableOpacity>
     </KeyboardAvoidingView>
