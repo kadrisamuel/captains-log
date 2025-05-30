@@ -1,5 +1,5 @@
 // src/screens/NewLogScreen.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -92,13 +92,23 @@ const NewLogScreen = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    // Reset the SpeechToText service when the screen mounts
+    SpeechToText.reset();
+
+    // Clean up event handlers when the screen unmounts
+    return () => {
+      SpeechToText.destroy();
+    };
+  }, []);
+
   return (
     <KeyboardAvoidingView 
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView style={styles.container}>
-{/*  removed the title input for now
+ 
        <View style={styles.formGroup}>
           <Text style={styles.label}>Title *</Text>
           <TextInput
@@ -108,7 +118,7 @@ const NewLogScreen = ({ navigation }) => {
             placeholder="Enter log title"
             editable={!isSaving}
           />
-        </View> */}
+        </View>
         
         <View style={styles.row}>
           <View style={[styles.formGroup, { flex: 1 }]}>
