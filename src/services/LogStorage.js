@@ -11,7 +11,7 @@ export class LogStorage {
       // Create log object with timestamp and unique ID
       const log = {
         id: Date.now().toString(), // Simple ID generation
-        //title: logData.title,
+        title: logData.title,
         location: logData.location,
         content: logData.content,
         createdAt: new Date().toISOString(),

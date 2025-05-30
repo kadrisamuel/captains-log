@@ -58,32 +58,36 @@ const NewLogScreen = ({ navigation }) => {
   };
 
   const saveLog = async () => {
-    // Validate input
-    /*if (!title.trim()) {
-      Alert.alert('Error', 'Please enter a title for your log entry.');
-      return;
-    }*/
+    // If title is empty, set it as the first 20 characters of content + "..." if needed
+    let trimmedTitle = title.trim();
+    const trimmedContent = content.trim();
 
-    if (!content.trim()) {
+    if (!trimmedContent) {
       Alert.alert('Error', 'Please enter some content for your log entry.');
       return;
+    }
+
+    if (!trimmedTitle) {
+      trimmedTitle = trimmedContent.length > 20
+        ? trimmedContent.substring(0, 20) + '...'
+        : trimmedContent;
     }
 
     setIsSaving(true);
 
     try {
       const logData = {
-        //title: title.trim(),
+        title: trimmedTitle,
         location: location.trim(),
-        content: content.trim()
+        content: trimmedContent,
       };
 
       const savedLog = await LogStorage.saveLog(logData);
+      setTitle('');
       setLocation('');
       setContent('');
       navigation.goBack();
       Alert.alert('Success', 'Log entry saved successfully!');
-      
     } catch (error) {
       Alert.alert('Error', 'Failed to save log entry. Please try again.');
       console.error('Save log error:', error);
@@ -110,7 +114,7 @@ const NewLogScreen = ({ navigation }) => {
       <ScrollView style={styles.container}>
  
        <View style={styles.formGroup}>
-          <Text style={styles.label}>Title *</Text>
+          <Text style={styles.label}>Title</Text>
           <TextInput
             style={styles.input}
             value={title}
