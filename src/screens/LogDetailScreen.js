@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  Share
+  Share,
+  TextInput
 } from 'react-native';
 import { LogStorage } from '../services/LogStorage';
 
@@ -16,6 +17,10 @@ const LogDetailScreen = ({ route, navigation }) => {
   const { logId } = route.params;
   const [log, setLog] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editLocation, setEditLocation] = useState('');
+  const [editContent, setEditContent] = useState('');
 
   useEffect(() => {
     loadLog();
@@ -63,7 +68,7 @@ const LogDetailScreen = ({ route, navigation }) => {
       ]
     );
   };
-
+  // TODO: Implement share functionality with some reasonable data structure
   const handleShare = async () => {
     try {
       const shareContent = `${log.title}\n\n${log.location ? `Location: ${log.location}\n\n` : ''}${log.content}\n\nCreated: ${formatDate(log.createdAt)}`;
@@ -77,9 +82,34 @@ const LogDetailScreen = ({ route, navigation }) => {
     }
   };
 
-  // TODO: Implement edit functionality
   const handleEdit = () => {
-    //navigation.navigate('EditLog', { logId: log.id });
+    setEditTitle(log.title || '');
+    setEditLocation(log.location || '');
+    setEditContent(log.content || '');
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const updatedLog = {
+        ...log,
+        title: editTitle,
+        location: editLocation,
+        content: editContent,
+        updatedAt: new Date().toISOString(),
+      };
+      await LogStorage.updateLog(log.id, updatedLog);
+      setLog(updatedLog);
+      setIsEditing(false);
+      navigation.goBack();
+      Alert.alert('Success', 'Log updated successfully!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update log');
+    }
   };
 
   const formatDate = (dateString) => {
@@ -114,14 +144,35 @@ const LogDetailScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <ScrollView style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.title}>{log.title}</Text>
-          
-          {log.location ? (
-            <View style={styles.locationContainer}>
-              <Text style={styles.locationIcon}>📍</Text>
-              <Text style={styles.location}>{log.location}</Text>
-            </View>
-          ) : null}
+          {isEditing ? (
+            <>
+              <TextInput
+                style={[styles.title, {backgroundColor: '#f1f5f9'}]}
+                value={editTitle}
+                onChangeText={setEditTitle}
+                placeholder="Title"
+              />
+              <View style={styles.locationContainer}>
+                <Text style={styles.locationIcon}>📍</Text>
+                <TextInput
+                  style={[styles.location, {backgroundColor: '#f1f5f9'}]}
+                  value={editLocation}
+                  onChangeText={setEditLocation}
+                  placeholder="Location"
+                />
+              </View>
+            </>
+          ) : (
+            <>
+              <Text style={styles.title}>{log.title}</Text>
+              {log.location ? (
+                <View style={styles.locationContainer}>
+                  <Text style={styles.locationIcon}>📍</Text>
+                  <Text style={styles.location}>{log.location}</Text>
+                </View>
+              ) : null}
+            </>
+          )}
           
           <View style={styles.dateContainer}>
             <Text style={styles.dateLabel}>Created:</Text>
@@ -137,31 +188,60 @@ const LogDetailScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.contentContainer}>
-          <Text style={styles.contentText}>{log.content}</Text>
+          {isEditing ? (
+            <TextInput
+              style={[styles.contentText, {backgroundColor: '#f1f5f9', minHeight: 120}]}
+              value={editContent}
+              onChangeText={setEditContent}
+              placeholder="Content"
+              multiline
+            />
+          ) : (
+            <Text style={styles.contentText}>{log.content}</Text>
+          )}
         </View>
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.button, styles.shareButton]}
-          onPress={handleShare}
-        >
-          <Text style={styles.shareButtonText}>Share</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={[styles.button, styles.editButton]}
-          onPress={handleEdit}
-        >
-          <Text style={styles.editButtonText}>Edit</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={[styles.button, styles.deleteButton]}
-          onPress={handleDelete}
-        >
-          <Text style={styles.deleteButtonText}>Delete</Text>
-        </TouchableOpacity>
+        {isEditing ? (
+          <>
+            <TouchableOpacity
+              style={[styles.button, styles.shareButton]}
+              onPress={handleSaveEdit}
+            >
+              <Text style={styles.shareButtonText}>Save</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.deleteButton]}
+              onPress={handleCancelEdit}
+            >
+              <Text style={styles.deleteButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <TouchableOpacity
+              style={[styles.button, styles.shareButton]}
+              onPress={handleShare}
+            >
+              <Text style={styles.shareButtonText}>Share</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={[styles.button, styles.editButton]}
+              onPress={handleEdit}
+            >
+              <Text style={styles.editButtonText}>Edit</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={[styles.button, styles.deleteButton]}
+              onPress={handleDelete}
+            >
+              <Text style={styles.deleteButtonText}>Delete</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </View>
   );
@@ -286,6 +366,35 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     color: '#ef4444',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    fontSize: 16,
+    color: '#334155',
+  },
+  textArea: {
+    minHeight: 100,
+    textAlignVertical: 'top',
+  },
+  saveButton: {
+    backgroundColor: '#4caf50',
+  },
+  saveButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: '#f44336',
+  },
+  cancelButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 
