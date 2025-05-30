@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { LogStorage } from '../services/LogStorage';
 import SpeechToText from '../services/SpeechToText';
+import Geolocation from 'react-native-geolocation-service';
 
 const NewLogScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
@@ -97,10 +98,43 @@ const NewLogScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    // Reset the SpeechToText service when the screen mounts
+    Geolocation.requestAuthorization('whenInUse').then((result) => {
+      if (result === 'granted' || result === true) {
+        Geolocation.getCurrentPosition(
+          async position => {
+            const { latitude, longitude } = position.coords;
+            try {
+              const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+              );
+              const data = await response.json();
+              // Try to get city, town, or village from the address
+              const address = data.address || {};
+              const city =
+                address.city ||
+                address.town ||
+                address.village ||
+                address.hamlet ||
+                address.state ||
+                address.county ||
+                data.display_name || // fallback to display_name
+                `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+              setLocation(city);
+            } catch (err) {
+              setLocation(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
+              console.log('Reverse geocoding error:', err);
+            }
+          },
+          error => {
+            console.log('Geolocation error:', error);
+          },
+          { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
+        );
+      }
+    });
+
     SpeechToText.reset();
 
-    // Clean up event handlers when the screen unmounts
     return () => {
       SpeechToText.destroy();
     };
