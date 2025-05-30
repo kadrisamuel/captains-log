@@ -79,23 +79,10 @@ const NewLogScreen = ({ navigation }) => {
       };
 
       const savedLog = await LogStorage.saveLog(logData);
-      
-      Alert.alert(
-        'Success', 
-        'Log entry saved successfully!',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // Clear form and navigate back
-              //setTitle('');
-              setLocation('');
-              setContent('');
-              navigation.goBack();
-            }
-          }
-        ]
-      );
+      setLocation('');
+      setContent('');
+      navigation.goBack();
+      Alert.alert('Success', 'Log entry saved successfully!');
       
     } catch (error) {
       Alert.alert('Error', 'Failed to save log entry. Please try again.');
