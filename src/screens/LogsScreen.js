@@ -75,7 +75,6 @@ const LogsListScreen = ({ navigation }) => {
             try {
               await LogStorage.deleteLog(logId);
               await loadLogs();
-              Alert.alert('Success', 'Log deleted successfully');
             } catch (error) {
               Alert.alert('Error', 'Failed to delete log');
             }
