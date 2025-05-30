@@ -13,12 +13,41 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { LogStorage } from '../services/LogStorage';
+import { SpeechToText } from '../services/SpeechToText';
 
 const NewLogScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+
+  const startRecording = async () => {
+    try {
+      await SpeechToText.startListening();
+    } catch (error) {
+      console.error('Error starting recording:', error);
+    }
+  };
+
+  const stopRecording = async () => {
+    try {
+      const result = await SpeechToText.stopListening();
+      setContent(result);
+      saveLog(); // Automatically save after recording
+    } catch (error) {
+      console.error('Error stopping recording:', error);
+    }
+  };
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+    setIsRecording(!isRecording);
+  };
 
   const saveLog = async () => {
     // Validate input
@@ -74,7 +103,8 @@ const NewLogScreen = ({ navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView style={styles.container}>
-{/*         <View style={styles.formGroup}>
+{/*  removed the title input for now
+       <View style={styles.formGroup}>
           <Text style={styles.label}>Title *</Text>
           <TextInput
             style={styles.input}
@@ -129,7 +159,8 @@ const NewLogScreen = ({ navigation }) => {
       </ScrollView>
       <TouchableOpacity
           style={[styles.recordButton, isSaving && styles.recordButtonDisabled]}
-          onPress={saveLog}
+          onPress={toggleRecording}
+          onP
           disabled={isSaving}>
           {isSaving ? (
             <View style={styles.recordButtonContent}>
