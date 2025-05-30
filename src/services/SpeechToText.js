@@ -10,6 +10,7 @@ class SpeechToText {
   started = "";
   results = [];
   partialResults = [];
+  isListening = false; // Add this flag
 
   constructor() {
     Voice.onSpeechRecognized = (event) => {
@@ -21,10 +22,20 @@ class SpeechToText {
     Voice.onSpeechError = (event) => {
       this.error = event.error;
     };
+    Voice.onSpeechStart = () => {
+      this.isListening = true;
+    };
+    Voice.onSpeechEnd = () => {
+      this.isListening = false;
+    };
     // Add other event handlers as needed
   }
 
   async startListening(onSpeechResults, onSpeechError) {
+    if (this.isListening) {
+      // Already listening, do not start again
+      return;
+    }
     try {
       Voice.onSpeechResults = (event) => {
         this.results = event.value;
@@ -35,14 +46,20 @@ class SpeechToText {
         if (onSpeechError) onSpeechError(event.error);
       };
       await Voice.start("en-US");
+      this.isListening = true;
     } catch (error) {
       console.error("Error starting speech recognition:", error);
     }
   }
 
   async stopListening() {
+    if (!this.isListening) {
+      // Not listening, nothing to stop
+      return;
+    }
     try {
       await Voice.stop();
+      this.isListening = false;
     } catch (error) {
       console.error("Error stopping speech recognition:", error);
     }
