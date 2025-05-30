@@ -59,6 +59,11 @@ const NewLogScreen = ({ navigation }) => {
   };
 
   const saveLog = async () => {
+    // If recording, stop it first
+    if (isRecording) {
+      await stopRecording();
+    }
+
     // If title is empty, set it as the first 20 characters of content + "..." if needed
     let trimmedTitle = title.trim();
     const trimmedContent = content.trim();
