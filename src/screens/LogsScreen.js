@@ -14,6 +14,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { LogStorage } from '../utils/LogStorage';
 import strings from '../utils/strings';
+import { Swipeable } from 'react-native-gesture-handler';
 
 const LogsListScreen = ({ navigation }) => {
   const [logs, setLogs] = useState([]);
@@ -93,30 +94,34 @@ const LogsListScreen = ({ navigation }) => {
   };
 
   const renderLogItem = ({ item }) => (
-    <View style={styles.logItem}>
-      <TouchableOpacity
-        style={styles.logContent}
-        onPress={() => navigation.navigate('LogDetail', { logId: item.id })}
-      >
-        <Text style={styles.logTitle}>{item.title}</Text>
-        {item.location ? (
-          <Text style={styles.logLocation}>📍 {item.location}</Text>
-        ) : null}
-        <Text style={styles.logPreview} numberOfLines={2}>
-          {item.content}
-        </Text>
-        <Text style={styles.logDate}>
-          {formatDate(item.createdAt)}
-        </Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => handleDeleteLog(item.id, item.title)}
-      >
-        <Text style={styles.deleteButtonText}>🗑️</Text>
-      </TouchableOpacity>
-    </View>
+    <Swipeable renderRightActions={() => renderRightActions(item)}>
+      <View style={styles.logItem}>
+        <TouchableOpacity
+          style={styles.logContent}
+          onPress={() => navigation.navigate('LogDetail', { logId: item.id })}
+        >
+          <Text style={styles.logTitle}>{item.title}</Text>
+          {item.location ? (
+            <Text style={styles.logLocation}>📍 {item.location}</Text>
+          ) : null}
+          <Text style={styles.logPreview} numberOfLines={2}>
+            {item.content}
+          </Text>
+          <Text style={styles.logDate}>
+            {formatDate(item.createdAt)}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </Swipeable>
+  );
+
+  const renderRightActions = (item) => (
+    <TouchableOpacity
+      style={styles.deleteButton}
+      onPress={() => handleDeleteLog(item.id, item.title)}
+    >
+      <Text style={styles.deleteButtonText}>🗑️</Text>
+    </TouchableOpacity>
   );
 
   const renderEmptyState = () => (
@@ -125,14 +130,6 @@ const LogsListScreen = ({ navigation }) => {
       <Text style={styles.emptyStateSubtext}>
         {searchQuery ? strings.logs.tryDifferentSearch : strings.logs.createFirstLog}
       </Text>
-      {!searchQuery && (
-        <TouchableOpacity
-          style={styles.fab}
-          onPress={() => navigation.navigate('NewLog')}
-        >
-          <Text style={styles.fabText}>{strings.logs.fabAdd}</Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 
@@ -249,10 +246,11 @@ const styles = StyleSheet.create({
     color: '#94a3b8',
   },
   deleteButton: {
-    width: 60,
     backgroundColor: '#ef4444',
     justifyContent: 'center',
     alignItems: 'center',
+    width: 75,
+    height: '100%',
   },
   deleteButtonText: {
     fontSize: 20,
