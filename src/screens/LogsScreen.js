@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { LogStorage } from '../services/LogStorage';
+import strings from '../constants/strings';
 
 const LogsListScreen = ({ navigation }) => {
   const [logs, setLogs] = useState([]);
@@ -36,7 +37,7 @@ const LogsListScreen = ({ navigation }) => {
       setFilteredLogs(allLogs);
     } catch (error) {
       console.error('Error loading logs:', error);
-      Alert.alert('Error', 'Failed to load logs');
+      Alert.alert(strings.logs.error, strings.logs.failedToLoadLogs);
     } finally {
       setIsLoading(false);
     }
@@ -64,19 +65,19 @@ const LogsListScreen = ({ navigation }) => {
 
   const handleDeleteLog = (logId, logTitle) => {
     Alert.alert(
-      'Delete Log',
-      `Are you sure you want to delete "${logTitle}"?`,
+      strings.logs.deleteLogTitle,
+      strings.logs.deleteLogMessage(logTitle),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: strings.logs.cancel, style: 'cancel' },
         {
-          text: 'Delete',
+          text: strings.logs.delete,
           style: 'destructive',
           onPress: async () => {
             try {
               await LogStorage.deleteLog(logId);
               await loadLogs();
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete log');
+              Alert.alert(strings.logs.error, strings.logs.failedToDeleteLog);
             }
           }
         }
@@ -86,10 +87,9 @@ const LogsListScreen = ({ navigation }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
+    const datePart = date.toLocaleDateString();
+    const timePart = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return strings.logs.logDateAt(datePart, timePart);
   };
 
   const renderLogItem = ({ item }) => (
@@ -121,16 +121,16 @@ const LogsListScreen = ({ navigation }) => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Text style={styles.emptyStateText}>No logs found</Text>
+      <Text style={styles.emptyStateText}>{strings.logs.noLogs}</Text>
       <Text style={styles.emptyStateSubtext}>
-        {searchQuery ? 'Try a different search term' : 'Create your first log entry!'}
+        {searchQuery ? strings.logs.tryDifferentSearch : strings.logs.createFirstLog}
       </Text>
       {!searchQuery && (
         <TouchableOpacity
           style={styles.fab}
           onPress={() => navigation.navigate('NewLog')}
         >
-          <Text style={styles.fabText}>+</Text>
+          <Text style={styles.fabText}>{strings.logs.fabAdd}</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -140,7 +140,7 @@ const LogsListScreen = ({ navigation }) => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#075985" />
-        <Text style={styles.loadingText}>Loading logs...</Text>
+        <Text style={styles.loadingText}>{strings.logs.loading}</Text>
       </View>
     );
   }
@@ -150,7 +150,7 @@ const LogsListScreen = ({ navigation }) => {
       <View style={styles.header}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search logs..."
+          placeholder={strings.logs.searchPlaceholder}
           value={searchQuery}
           onChangeText={handleSearch}
         />
@@ -174,7 +174,7 @@ const LogsListScreen = ({ navigation }) => {
           style={styles.fab}
           onPress={() => navigation.navigate('NewLog')}
         >
-          <Text style={styles.fabText}>+</Text>
+          <Text style={styles.fabText}>{strings.logs.fabAdd}</Text>
         </TouchableOpacity>
     </View>
   );

@@ -1,6 +1,8 @@
 // src/screens/SettingsScreen.js
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import strings from '../constants/strings';
+
 
 const SettingsScreen = () => {
   const [notifications, setNotifications] = useState(true);
@@ -9,10 +11,10 @@ const SettingsScreen = () => {
   
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>App Settings</Text>
+      <Text style={styles.sectionTitle}>{strings.settings.appSettings}</Text>
       
       <View style={styles.settingItem}>
-        <Text style={styles.settingLabel}>Push Notifications</Text>
+        <Text style={styles.settingLabel}>{strings.settings.notifications}</Text>
         <Switch
           value={notifications}
           onValueChange={setNotifications}
@@ -22,7 +24,7 @@ const SettingsScreen = () => {
       </View>
       
       <View style={styles.settingItem}>
-        <Text style={styles.settingLabel}>Dark Mode</Text>
+        <Text style={styles.settingLabel}>{strings.settings.darkMode}</Text>
         <Switch
           value={darkMode}
           onValueChange={setDarkMode}
@@ -32,7 +34,7 @@ const SettingsScreen = () => {
       </View>
       
       <View style={styles.settingItem}>
-        <Text style={styles.settingLabel}>Location Tracking</Text>
+        <Text style={styles.settingLabel}>{strings.settings.locationTracking}</Text>
         <Switch
           value={locationTracking}
           onValueChange={setLocationTracking}
@@ -41,14 +43,14 @@ const SettingsScreen = () => {
         />
       </View>
       
-      <Text style={styles.sectionTitle}>Account</Text>
+      <Text style={styles.sectionTitle}>{strings.settings.account}</Text>
       
       <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Export Log Data</Text>
+        <Text style={styles.buttonText}>{strings.settings.exportLogData}</Text>
       </TouchableOpacity>
       
       <TouchableOpacity style={[styles.button, styles.dangerButton]}>
-        <Text style={styles.buttonText}>Sign Out</Text>
+        <Text style={styles.buttonText}>{strings.settings.signOut}</Text>
       </TouchableOpacity>
     </View>
   );

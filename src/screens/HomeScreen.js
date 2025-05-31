@@ -1,32 +1,34 @@
 // src/screens/HomeScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import strings from '../constants/strings';
+
 
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Captain's Log</Text>
-      <Text style={styles.subtitle}>Record your journey</Text>
+      <Text style={styles.title}>{strings.home.welcome}</Text>
+      <Text style={styles.subtitle}>{strings.home.subtitle}</Text>
 
       <TouchableOpacity 
         style={[styles.button, styles.secondaryButton]}
         onPress={() => navigation.navigate('Logs')}
       >
-        <Text style={styles.buttonText}>View All Logs</Text>
+        <Text style={styles.buttonText}>{strings.home.viewAllLogs}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
         style={styles.button}
         onPress={() => navigation.navigate('NewLog')}
       >
-        <Text style={styles.buttonText}>New Manual Log</Text>
+        <Text style={styles.buttonText}>{strings.home.newManualLog}</Text>
       </TouchableOpacity>
       
       <TouchableOpacity 
         style={styles.button}
         onPress={() => navigation.navigate('NewLog')}
       >
-        <Text style={styles.buttonText}>Record Voice Log</Text>
+        <Text style={styles.buttonText}>{strings.home.recordVoiceLog}</Text>
       </TouchableOpacity>
 
     </View>

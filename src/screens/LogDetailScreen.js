@@ -12,6 +12,7 @@ import {
   TextInput
 } from 'react-native';
 import { LogStorage } from '../services/LogStorage';
+import strings from '../constants/strings';
 
 const LogDetailScreen = ({ route, navigation }) => {
   const { logId } = route.params;
@@ -33,13 +34,17 @@ const LogDetailScreen = ({ route, navigation }) => {
       if (logData) {
         setLog(logData);
       } else {
-        Alert.alert('Error', 'Log not found', [
-          { text: 'OK', onPress: () => navigation.goBack() }
-        ]);
+        // Not found alert
+        Alert.alert(
+          strings.logDetail.error,
+          strings.logDetail.notFound,
+          [{ text: strings.logDetail.ok, onPress: () => navigation.goBack() }]
+        );
       }
     } catch (error) {
       console.error('Error loading log:', error);
-      Alert.alert('Error', 'Failed to load log');
+      // Failed to load alert
+      Alert.alert(strings.logDetail.error, strings.logDetail.failedToLoad);
     } finally {
       setIsLoading(false);
     }
@@ -47,21 +52,23 @@ const LogDetailScreen = ({ route, navigation }) => {
 
   const handleDelete = () => {
     Alert.alert(
-      'Delete Log',
-      `Are you sure you want to delete "${log.title}"?`,
+      strings.logDetail.deleteTitle,
+      strings.logDetail.deleteMessage(log.title),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: strings.logDetail.cancel, style: 'cancel' },
         {
-          text: 'Delete',
+          text: strings.logDetail.delete,
           style: 'destructive',
           onPress: async () => {
             try {
               await LogStorage.deleteLog(logId);
-              Alert.alert('Success', 'Log deleted successfully', [
-                { text: 'OK', onPress: () => navigation.goBack() }
-              ]);
+              Alert.alert(
+                strings.logDetail.successDelete,
+                '',
+                [{ text: strings.logDetail.ok, onPress: () => navigation.goBack() }]
+              );
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete log');
+              Alert.alert(strings.logDetail.error, strings.logDetail.failedToDelete);
             }
           }
         }
@@ -106,9 +113,11 @@ const LogDetailScreen = ({ route, navigation }) => {
       setLog(updatedLog);
       setIsEditing(false);
       navigation.goBack();
-      Alert.alert('Success', 'Log updated successfully!');
+      // Save edit success
+      Alert.alert(strings.logDetail.successUpdate);
     } catch (error) {
-      Alert.alert('Error', 'Failed to update log');
+      // Save edit failure
+      Alert.alert(strings.logDetail.error, strings.logDetail.failedToUpdate);
     }
   };
 
@@ -127,7 +136,7 @@ const LogDetailScreen = ({ route, navigation }) => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#075985" />
-        <Text style={styles.loadingText}>Loading log...</Text>
+        <Text style={styles.loadingText}>{strings.logDetail.loading}</Text>
       </View>
     );
   }
@@ -135,7 +144,7 @@ const LogDetailScreen = ({ route, navigation }) => {
   if (!log) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Log not found</Text>
+        <Text style={styles.errorText}>{strings.logDetail.notFound}</Text>
       </View>
     );
   }
@@ -150,7 +159,7 @@ const LogDetailScreen = ({ route, navigation }) => {
                 style={[styles.title, {backgroundColor: '#f1f5f9'}]}
                 value={editTitle}
                 onChangeText={setEditTitle}
-                placeholder="Title"
+                placeholder={strings.logDetail.titlePlaceholder}
               />
               <View style={styles.locationContainer}>
                 <Text style={styles.locationIcon}>📍</Text>
@@ -158,7 +167,7 @@ const LogDetailScreen = ({ route, navigation }) => {
                   style={[styles.location, {backgroundColor: '#f1f5f9'}]}
                   value={editLocation}
                   onChangeText={setEditLocation}
-                  placeholder="Location"
+                  placeholder={strings.logDetail.locationPlaceholder}
                 />
               </View>
             </>
@@ -175,13 +184,13 @@ const LogDetailScreen = ({ route, navigation }) => {
           )}
           
           <View style={styles.dateContainer}>
-            <Text style={styles.dateLabel}>Created:</Text>
+            <Text style={styles.dateLabel}>{strings.logDetail.created}:</Text>
             <Text style={styles.date}>{formatDate(log.createdAt)}</Text>
           </View>
           
           {log.updatedAt !== log.createdAt && (
             <View style={styles.dateContainer}>
-              <Text style={styles.dateLabel}>Updated:</Text>
+              <Text style={styles.dateLabel}>{strings.logDetail.updated}:</Text>
               <Text style={styles.date}>{formatDate(log.updatedAt)}</Text>
             </View>
           )}
@@ -193,7 +202,7 @@ const LogDetailScreen = ({ route, navigation }) => {
               style={[styles.contentText, {backgroundColor: '#f1f5f9', minHeight: 120}]}
               value={editContent}
               onChangeText={setEditContent}
-              placeholder="Content"
+              placeholder={strings.logDetail.contentPlaceholder}
               multiline
             />
           ) : (
@@ -209,13 +218,13 @@ const LogDetailScreen = ({ route, navigation }) => {
               style={[styles.button, styles.shareButton]}
               onPress={handleSaveEdit}
             >
-              <Text style={styles.shareButtonText}>Save</Text>
+              <Text style={styles.shareButtonText}>{strings.logDetail.save}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.deleteButton]}
               onPress={handleCancelEdit}
             >
-              <Text style={styles.deleteButtonText}>Cancel</Text>
+              <Text style={styles.deleteButtonText}>{strings.logDetail.cancelEdit}</Text>
             </TouchableOpacity>
           </>
         ) : (
@@ -224,21 +233,21 @@ const LogDetailScreen = ({ route, navigation }) => {
               style={[styles.button, styles.shareButton]}
               onPress={handleShare}
             >
-              <Text style={styles.shareButtonText}>Share</Text>
+              <Text style={styles.shareButtonText}>{strings.logDetail.share}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
               style={[styles.button, styles.editButton]}
               onPress={handleEdit}
             >
-              <Text style={styles.editButtonText}>Edit</Text>
+              <Text style={styles.editButtonText}>{strings.logDetail.edit}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
               style={[styles.button, styles.deleteButton]}
               onPress={handleDelete}
             >
-              <Text style={styles.deleteButtonText}>Delete</Text>
+              <Text style={styles.deleteButtonText}>{strings.logDetail.delete}</Text>
             </TouchableOpacity>
           </>
         )}

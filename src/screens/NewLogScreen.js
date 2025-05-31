@@ -15,6 +15,8 @@ import {
 import { LogStorage } from '../services/LogStorage';
 import SpeechToText from '../services/SpeechToText';
 import Geolocation from 'react-native-geolocation-service';
+import strings from '../constants/strings';
+
 
 const NewLogScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
@@ -29,7 +31,10 @@ const NewLogScreen = ({ navigation }) => {
   };
 
   const onSpeechError = (error) => {
-    Alert.alert('Speech Recognition Error', error?.message || 'Unknown error');
+    Alert.alert(
+      strings.newLog.speechRecognitionError,
+      error?.message || strings.newLog.unknownError
+    );
   };
 
   const startRecording = async () => {
@@ -69,7 +74,7 @@ const NewLogScreen = ({ navigation }) => {
     const trimmedContent = content.trim();
 
     if (!trimmedContent) {
-      Alert.alert('Error', 'Please enter some content for your log entry.');
+      Alert.alert(strings.newLog.error, strings.newLog.emptyContentError);
       return;
     }
 
@@ -93,9 +98,9 @@ const NewLogScreen = ({ navigation }) => {
       setLocation('');
       setContent('');
       navigation.goBack();
-      Alert.alert('Success', 'Log entry saved successfully!');
+      Alert.alert('Success', strings.newLog.savingSuccess);
     } catch (error) {
-      Alert.alert('Error', 'Failed to save log entry. Please try again.');
+      Alert.alert('Error', strings.newLog.savingError);
       console.error('Save log error:', error);
     } finally {
       setIsSaving(false);
@@ -153,36 +158,36 @@ const NewLogScreen = ({ navigation }) => {
       <ScrollView style={styles.container}>
  
        <View style={styles.formGroup}>
-          <Text style={styles.label}>Title</Text>
+          <Text style={styles.label}>{strings.newLog.titleLabel}</Text>
           <TextInput
             style={styles.input}
             value={title}
             onChangeText={setTitle}
-            placeholder="Enter log title"
+            placeholder={strings.newLog.titlePlaceholder}
             editable={!isSaving}
           />
         </View>
         
         <View style={styles.row}>
           <View style={[styles.formGroup, { flex: 1 }]}>
-            <Text style={styles.label}>Location</Text>
+            <Text style={styles.label}>{strings.newLog.locationLabel}</Text>
             <TextInput
               style={styles.input}
               value={location}
               onChangeText={setLocation}
-              placeholder="Freeform text"
+              placeholder={strings.newLog.locationPlaceholder}
               editable={!isSaving}
             />
           </View>
         </View>
         
         <View style={styles.formGroup}>
-          <Text style={styles.label}>Log Entry *</Text>
+          <Text style={styles.label}>{strings.newLog.contentLabel}</Text>
           <TextInput
             style={styles.textArea}
             value={content}
             onChangeText={setContent}
-            placeholder="Write your log entry here..."
+            placeholder={strings.newLog.contentPlaceholder}
             multiline
             numberOfLines={10}
             textAlignVertical="top"
@@ -198,10 +203,12 @@ const NewLogScreen = ({ navigation }) => {
           {isSaving ? (
             <View style={styles.buttonContent}>
               <ActivityIndicator color="white" size="small" />
-              <Text style={[styles.buttonText, { marginLeft: 8 }]}>Saving...</Text>
+              <Text style={[styles.buttonText, { marginLeft: 8 }]}>
+                {strings.newLog.saving}
+              </Text>
             </View>
           ) : (
-            <Text style={styles.buttonText}>Save Log Entry</Text>
+            <Text style={styles.buttonText}>{strings.newLog.saveButton}</Text>
           )}
         </TouchableOpacity>
       </ScrollView>
@@ -213,11 +220,13 @@ const NewLogScreen = ({ navigation }) => {
           {isSaving ? (
             <View style={styles.recordButtonContent}>
               <ActivityIndicator color="white" size="small" />
-              <Text style={[styles.recordButtonText, { marginLeft: 8 }]}>Saving...</Text>
+              <Text style={[styles.recordButtonText, { marginLeft: 8 }]}>
+                {strings.newLog.saving}
+              </Text>
             </View>
           ) : (
             <Text style={styles.recordButtonText}>
-              {isRecording ? 'Stop' : 'Record'}
+              {isRecording ? strings.newLog.stop : strings.newLog.record}
             </Text>
           )}
         </TouchableOpacity>
