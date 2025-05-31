@@ -1,7 +1,7 @@
 // src/screens/SettingsScreen.js
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
-import strings from '../constants/strings';
+import strings from '../utils/strings';
 
 
 const SettingsScreen = () => {

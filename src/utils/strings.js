@@ -1,3 +1,4 @@
+// src/utils/strings.js
 const strings = {
   logs: {
     searchPlaceholder: "Search logs...",

@@ -1,4 +1,4 @@
-// src/services/LogStorage.js
+// src/utils/LogStorage.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LOGS_STORAGE_KEY = '@user_logs';

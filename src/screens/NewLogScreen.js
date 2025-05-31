@@ -12,10 +12,10 @@ import {
   Alert,
   ActivityIndicator
 } from 'react-native';
-import { LogStorage } from '../services/LogStorage';
-import SpeechToText from '../services/SpeechToText';
+import { LogStorage } from '../utils/LogStorage';
+import SpeechToText from '../utils/SpeechToText';
 import Geolocation from 'react-native-geolocation-service';
-import strings from '../constants/strings';
+import strings from '../utils/strings';
 
 
 const NewLogScreen = ({ navigation }) => {

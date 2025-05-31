@@ -12,8 +12,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { LogStorage } from '../services/LogStorage';
-import strings from '../constants/strings';
+import { LogStorage } from '../utils/LogStorage';
+import strings from '../utils/strings';
 
 const LogsListScreen = ({ navigation }) => {
   const [logs, setLogs] = useState([]);

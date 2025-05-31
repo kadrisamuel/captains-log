@@ -11,8 +11,8 @@ import {
   Share,
   TextInput
 } from 'react-native';
-import { LogStorage } from '../services/LogStorage';
-import strings from '../constants/strings';
+import { LogStorage } from '../utils/LogStorage';
+import strings from '../utils/strings';
 
 const LogDetailScreen = ({ route, navigation }) => {
   const { logId } = route.params;

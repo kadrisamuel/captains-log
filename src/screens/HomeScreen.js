@@ -1,7 +1,7 @@
 // src/screens/HomeScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import strings from '../constants/strings';
+import strings from '../utils/strings';
 
 
 const HomeScreen = ({ navigation }) => {

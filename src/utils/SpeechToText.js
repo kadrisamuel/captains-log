@@ -1,4 +1,4 @@
-// src/services/SpeechToText.js
+// src/utils/SpeechToText.js
 
 import Voice from "@react-native-voice/voice";
 
