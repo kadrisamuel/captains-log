@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Captain&apos;s Log</string>
+	<string>Captain's Log</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -33,6 +33,10 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app requires location access for location logging features.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to the microphone for voice logging features.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app requires access to speech recognition for transcribing voice logs.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -47,9 +51,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires access to the microphone for voice logging features.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>This app requires access to speech recognition for transcribing voice logs.</string>
 </dict>
 </plist>
