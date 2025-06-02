@@ -18,7 +18,7 @@ import Geolocation from 'react-native-geolocation-service';
 import strings from '../utils/strings';
 
 
-const NewLogScreen = ({ navigation }) => {
+const NewLogScreen = ({ navigation, route }) => {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [content, setContent] = useState('');
@@ -108,6 +108,11 @@ const NewLogScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    // Start recording if opened with app shortcut record=true
+    if (route?.params?.record) {
+      startRecording();
+    }
+
     Geolocation.requestAuthorization('whenInUse').then((result) => {
       if (result === 'granted' || result === true) {
         Geolocation.getCurrentPosition(
