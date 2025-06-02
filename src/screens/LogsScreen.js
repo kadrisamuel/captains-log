@@ -148,6 +148,7 @@ const LogsListScreen = ({ navigation }) => {
         <TextInput
           style={styles.searchInput}
           placeholder={strings.logs.searchPlaceholder}
+          placeholderTextColor={styles.searchInput.placeholderTextColor}
           value={searchQuery}
           onChangeText={handleSearch}
         />
@@ -197,6 +198,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
+    placeholderTextColor: '#94a3b8',
   },
   addButton: {
     backgroundColor: '#075985',
