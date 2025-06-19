@@ -3,6 +3,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text } from 'react-native';
+import { useTheme } from '../context/ThemeContext'; // <-- import useTheme
 
 // Import screens
 // import HomeScreen from '../screens/HomeScreen';
@@ -12,9 +13,9 @@ import NewLogScreen from '../screens/NewLogScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
 // Simple icon component (replace with your icons later)
-const Icon = ({ name }) => (
+const Icon = ({ name, color }) => (
   <View style={{ width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}>
-    <Text>{name[0].toUpperCase()}</Text>
+    <Text style={{ color }}>{name[0].toUpperCase()}</Text>
   </View>
 );
 
@@ -24,19 +25,28 @@ const Tab = createBottomTabNavigator();
 
 // Bottom tab navigator
 const BottomTabNavigator = () => {
+  const { darkMode } = useTheme();
+
+  const tabBarBg = darkMode ? '#1e293b' : '#f0f9ff';
+  const tabBarActiveTintColor = darkMode ? '#38bdf8' : '#075985';
+  const tabBarInactiveTintColor = darkMode ? '#64748b' : 'gray';
+  const headerBg = darkMode ? '#334155' : '#075985';
+  const headerTintColor = '#fff';
+
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#075985',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor,
+        tabBarInactiveTintColor,
         tabBarStyle: {
+          backgroundColor: tabBarBg,
           paddingBottom: 5,
           paddingTop: 5,
         },
         headerStyle: {
-          backgroundColor: '#075985',
+          backgroundColor: headerBg,
         },
-        headerTintColor: '#fff',
+        headerTintColor,
         headerTitleStyle: {
           fontWeight: 'bold',
         },
@@ -72,13 +82,18 @@ const BottomTabNavigator = () => {
 
 // Main navigator
 const MainNavigator = () => {
+  const { darkMode } = useTheme();
+
+  const headerBg = darkMode ? '#334155' : '#075985';
+  const headerTintColor = '#fff';
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#075985',
+          backgroundColor: headerBg,
         },
-        headerTintColor: '#fff',
+        headerTintColor,
         headerTitleStyle: {
           fontWeight: 'bold',
         },

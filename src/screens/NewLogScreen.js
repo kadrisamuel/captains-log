@@ -16,8 +16,8 @@ import { LogStorage } from '../utils/LogStorage';
 import SpeechToText from '../utils/SpeechToText';
 import Geolocation from 'react-native-geolocation-service';
 import strings from '../utils/strings';
-import { useGeolocation } from '../context/GeolocationContext'; // <-- add this
-
+import { useGeolocation } from '../context/GeolocationContext';
+import { useTheme } from '../context/ThemeContext'; // <-- import useTheme to access darkMode
 
 const NewLogScreen = ({ navigation, route }) => {
   const [title, setTitle] = useState('');
@@ -25,7 +25,19 @@ const NewLogScreen = ({ navigation, route }) => {
   const [content, setContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const { geolocationEnabled } = useGeolocation(); // <-- use context
+  const { geolocationEnabled } = useGeolocation();
+  const { darkMode } = useTheme(); // <-- use darkMode from ThemeContext
+
+  // Themed colors
+  const backgroundColor = darkMode ? '#1e293b' : '#f0f9ff';
+  const textColor = darkMode ? '#f1f5f9' : '#334155';
+  const labelColor = darkMode ? '#f1f5f9' : '#334155';
+  const inputBg = darkMode ? '#334155' : 'white';
+  const inputBorder = darkMode ? '#64748b' : '#cbd5e1';
+  const buttonBg = darkMode ? '#0ea5e9' : '#075985';
+  const buttonTextColor = '#fff';
+  const recordButtonBg = '#ef4444';
+  const recordButtonDisabledBg = '#94a3b8';
 
   const onSpeechResults = (results) => {
     // Join all recognized phrases with a space (or any separator you prefer)
@@ -162,42 +174,53 @@ const NewLogScreen = ({ navigation, route }) => {
 
   return (
     <KeyboardAvoidingView 
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView style={styles.container}>
- 
-       <View style={styles.formGroup}>
-          <Text style={styles.label}>{strings.newLog.titleLabel}</Text>
+      <ScrollView style={[styles.container, { backgroundColor }]}>
+        <View style={styles.formGroup}>
+          <Text style={[styles.label, { color: labelColor }]}>{strings.newLog.titleLabel}</Text>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { backgroundColor: inputBg, borderColor: inputBorder, color: textColor }
+            ]}
             value={title}
             onChangeText={setTitle}
             placeholder={strings.newLog.titlePlaceholder}
+            placeholderTextColor={darkMode ? '#94a3b8' : '#64748b'}
             editable={!isSaving}
           />
         </View>
         
         <View style={styles.row}>
           <View style={[styles.formGroup, { flex: 1 }]}>
-            <Text style={styles.label}>{strings.newLog.locationLabel}</Text>
+            <Text style={[styles.label, { color: labelColor }]}>{strings.newLog.locationLabel}</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { backgroundColor: inputBg, borderColor: inputBorder, color: textColor }
+              ]}
               value={location}
               onChangeText={setLocation}
               placeholder={strings.newLog.locationPlaceholder}
+              placeholderTextColor={darkMode ? '#94a3b8' : '#64748b'}
               editable={!isSaving}
             />
           </View>
         </View>
         
         <View style={styles.formGroup}>
-          <Text style={styles.label}>{strings.newLog.contentLabel}</Text>
+          <Text style={[styles.label, { color: labelColor }]}>{strings.newLog.contentLabel}</Text>
           <TextInput
-            style={styles.textArea}
+            style={[
+              styles.textArea,
+              { backgroundColor: inputBg, borderColor: inputBorder, color: textColor }
+            ]}
             value={content}
             onChangeText={setContent}
             placeholder={strings.newLog.contentPlaceholder}
+            placeholderTextColor={darkMode ? '#94a3b8' : '#64748b'}
             multiline
             numberOfLines={10}
             textAlignVertical="top"
@@ -206,7 +229,11 @@ const NewLogScreen = ({ navigation, route }) => {
         </View>
         
         <TouchableOpacity 
-          style={[styles.button, isSaving && styles.buttonDisabled]}
+          style={[
+            styles.button,
+            { backgroundColor: buttonBg },
+            isSaving && styles.buttonDisabled
+          ]}
           onPress={saveLog}
           disabled={isSaving}
         >
@@ -223,23 +250,26 @@ const NewLogScreen = ({ navigation, route }) => {
         </TouchableOpacity>
       </ScrollView>
       <TouchableOpacity
-          style={[styles.recordButton, isSaving && styles.recordButtonDisabled]}
-          onPress={toggleRecording}
-          disabled={isSaving}
-        >
-          {isSaving ? (
-            <View style={styles.recordButtonContent}>
-              <ActivityIndicator color="white" size="small" />
-              <Text style={[styles.recordButtonText, { marginLeft: 8 }]}>
-                {strings.newLog.saving}
-              </Text>
-            </View>
-          ) : (
-            <Text style={styles.recordButtonText}>
-              {isRecording ? strings.newLog.stop : strings.newLog.record}
+        style={[
+          styles.recordButton,
+          { backgroundColor: isSaving ? recordButtonDisabledBg : recordButtonBg },
+        ]}
+        onPress={toggleRecording}
+        disabled={isSaving}
+      >
+        {isSaving ? (
+          <View style={styles.recordButtonContent}>
+            <ActivityIndicator color="white" size="small" />
+            <Text style={[styles.recordButtonText, { marginLeft: 8 }]}>
+              {strings.newLog.saving}
             </Text>
-          )}
-        </TouchableOpacity>
+          </View>
+        ) : (
+          <Text style={styles.recordButtonText}>
+            {isRecording ? strings.newLog.stop : strings.newLog.record}
+          </Text>
+        )}
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
@@ -248,7 +278,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f0f9ff',
   },
   formGroup: {
     marginBottom: 20,
@@ -260,27 +289,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
     fontWeight: '500',
-    color: '#334155',
   },
   input: {
-    backgroundColor: 'white',
     borderWidth: 1,
-    borderColor: '#cbd5e1',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
   },
   textArea: {
-    backgroundColor: 'white',
     borderWidth: 1,
-    borderColor: '#cbd5e1',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
     minHeight: 200,
   },
   button: {
-    backgroundColor: '#075985',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -299,7 +322,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-    recordButton: {
+  recordButton: {
     position: 'absolute',
     width: '20%',
     height: '10%',
@@ -308,8 +331,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     bottom: '10%',
-    backgroundColor: '#ef4444',
-    borderRadius: '50%',
+    borderRadius: 999,
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

@@ -7,17 +7,27 @@ import { useGeolocation } from '../context/GeolocationContext'; // <-- add this
 
 const SettingsScreen = () => {
   const [notifications, setNotifications] = useState(true);
-  const { darkMode, setDarkMode } = useTheme(); // use context
-  const { geolocationEnabled, setGeolocationEnabled } = useGeolocation(); // <-- use context
+  const { darkMode, setDarkMode } = useTheme();
+  const { geolocationEnabled, setGeolocationEnabled } = useGeolocation();
 
   const buildType = __DEV__ ? 'Debug' : 'Release';
 
+  // Define themed colors
+  const backgroundColor = darkMode ? '#1e293b' : '#f0f9ff';
+  const textColor = darkMode ? '#f1f5f9' : '#334155';
+  const sectionTitleColor = darkMode ? '#f1f5f9' : '#334155';
+  const borderColor = darkMode ? '#334155' : '#e2e8f0';
+  const buttonBg = darkMode ? '#0ea5e9' : '#075985';
+  const buttonTextColor = '#fff';
+  const buildTypeLabelColor = darkMode ? '#cbd5e1' : '#64748b';
+  const buildTypeValueColor = darkMode ? '#f1f5f9' : '#334155';
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.sectionTitle}>{strings.settings.appSettings}</Text>
+    <View style={[styles.container, { backgroundColor }]}>
+      <Text style={[styles.sectionTitle, { color: sectionTitleColor }]}>{strings.settings.appSettings}</Text>
       
-      <View style={styles.settingItem}>
-        <Text style={styles.settingLabel}>{strings.settings.notifications}</Text>
+      <View style={[styles.settingItem, { borderBottomColor: borderColor }]}>
+        <Text style={[styles.settingLabel, { color: textColor }]}>{strings.settings.notifications}</Text>
         <Switch
           value={notifications}
           onValueChange={setNotifications}
@@ -26,8 +36,8 @@ const SettingsScreen = () => {
         />
       </View>
       
-      <View style={styles.settingItem}>
-        <Text style={styles.settingLabel}>{strings.settings.darkMode}</Text>
+      <View style={[styles.settingItem, { borderBottomColor: borderColor }]}>
+        <Text style={[styles.settingLabel, { color: textColor }]}>{strings.settings.darkMode}</Text>
         <Switch
           value={darkMode}
           onValueChange={setDarkMode}
@@ -36,8 +46,8 @@ const SettingsScreen = () => {
         />
       </View>
       
-      <View style={styles.settingItem}>
-        <Text style={styles.settingLabel}>{strings.settings.locationTracking}</Text>
+      <View style={[styles.settingItem, { borderBottomColor: borderColor }]}>
+        <Text style={[styles.settingLabel, { color: textColor }]}>{strings.settings.locationTracking}</Text>
         <Switch
           value={geolocationEnabled}
           onValueChange={setGeolocationEnabled}
@@ -46,19 +56,19 @@ const SettingsScreen = () => {
         />
       </View>
       
-      <Text style={styles.sectionTitle}>{strings.settings.account}</Text>
+      <Text style={[styles.sectionTitle, { color: sectionTitleColor }]}>{strings.settings.account}</Text>
       
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>{strings.settings.exportLogData}</Text>
+      <TouchableOpacity style={[styles.button, { backgroundColor: buttonBg }]}>
+        <Text style={[styles.buttonText, { color: buttonTextColor }]}>{strings.settings.exportLogData}</Text>
       </TouchableOpacity>
       
-{/*       <TouchableOpacity style={[styles.button, styles.dangerButton]}>
+      {/* <TouchableOpacity style={[styles.button, styles.dangerButton]}>
         <Text style={styles.buttonText}>{strings.settings.signOut}</Text>
-      </TouchableOpacity>
- */}
+      </TouchableOpacity> */}
+      
       <View style={styles.buildTypeContainer}>
-        <Text style={styles.buildTypeLabel}>Build:</Text>
-        <Text style={styles.buildTypeValue}>{buildType}</Text>
+        <Text style={[styles.buildTypeLabel, { color: buildTypeLabelColor }]}>Build:</Text>
+        <Text style={[styles.buildTypeValue, { color: buildTypeValueColor }]}>{buildType}</Text>
       </View>
     </View>
   );
@@ -68,14 +78,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f0f9ff',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 20,
     marginBottom: 15,
-    color: '#334155',
   },
   settingItem: {
     flexDirection: 'row',
@@ -83,14 +91,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
   },
   settingLabel: {
     fontSize: 16,
-    color: '#334155',
   },
   button: {
-    backgroundColor: '#075985',
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
@@ -101,7 +106,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonText: {
-    color: 'white',
     fontSize: 16,
     fontWeight: '500',
   },
@@ -116,12 +120,10 @@ const styles = StyleSheet.create({
   },
   buildTypeLabel: {
     fontSize: 14,
-    color: '#64748b',
     marginRight: 6,
   },
   buildTypeValue: {
     fontSize: 14,
-    color: '#334155',
     fontWeight: 'bold',
   },
 });

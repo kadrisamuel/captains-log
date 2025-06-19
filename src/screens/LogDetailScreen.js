@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { LogStorage } from '../utils/LogStorage';
 import strings from '../utils/strings';
+import { useTheme } from '../context/ThemeContext'; // <-- add this
 
 const LogDetailScreen = ({ route, navigation }) => {
   const { logId } = route.params;
@@ -22,6 +23,25 @@ const LogDetailScreen = ({ route, navigation }) => {
   const [editTitle, setEditTitle] = useState('');
   const [editLocation, setEditLocation] = useState('');
   const [editContent, setEditContent] = useState('');
+  const { darkMode } = useTheme(); // <-- use context
+
+  // Themed colors
+  const backgroundColor = darkMode ? '#1e293b' : '#f0f9ff';
+  const cardBg = darkMode ? '#334155' : 'white';
+  const borderColor = darkMode ? '#475569' : '#e2e8f0';
+  const titleColor = darkMode ? '#38bdf8' : '#075985';
+  const locationColor = darkMode ? '#cbd5e1' : '#64748b';
+  const dateLabelColor = darkMode ? '#94a3b8' : '#94a3b8';
+  const dateColor = darkMode ? '#cbd5e1' : '#64748b';
+  const contentTextColor = darkMode ? '#f1f5f9' : '#334155';
+  const buttonTextColor = '#fff';
+  const shareButtonBg = '#10b981';
+  const editButtonBg = darkMode ? '#0ea5e9' : '#075985';
+  const deleteButtonBg = '#ef4444';
+  const loadingTextColor = darkMode ? '#cbd5e1' : '#64748b';
+  const errorTextColor = '#ef4444';
+  const inputBg = darkMode ? '#475569' : '#f1f5f9';
+  const inputTextColor = darkMode ? '#f1f5f9' : '#334155';
 
   useEffect(() => {
     loadLog();
@@ -134,120 +154,132 @@ const LogDetailScreen = ({ route, navigation }) => {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#075985" />
-        <Text style={styles.loadingText}>{strings.logDetail.loading}</Text>
+      <View style={[styles.loadingContainer, { backgroundColor }]}>
+        <ActivityIndicator size="large" color={editButtonBg} />
+        <Text style={[styles.loadingText, { color: loadingTextColor }]}>{strings.logDetail.loading}</Text>
       </View>
     );
   }
 
   if (!log) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{strings.logDetail.notFound}</Text>
+      <View style={[styles.errorContainer, { backgroundColor }]}>
+        <Text style={[styles.errorText, { color: errorTextColor }]}>{strings.logDetail.notFound}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <ScrollView style={styles.content}>
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor: cardBg, borderBottomColor: borderColor }]}>
           {isEditing ? (
             <>
               <TextInput
-                style={[styles.title, {backgroundColor: '#f1f5f9'}]}
+                style={[
+                  styles.title,
+                  { backgroundColor: inputBg, color: inputTextColor }
+                ]}
                 value={editTitle}
                 onChangeText={setEditTitle}
                 placeholder={strings.logDetail.titlePlaceholder}
+                placeholderTextColor={locationColor}
               />
               <View style={styles.locationContainer}>
                 <Text style={styles.locationIcon}>📍</Text>
                 <TextInput
-                  style={[styles.location, {backgroundColor: '#f1f5f9'}]}
+                  style={[
+                    styles.location,
+                    { backgroundColor: inputBg, color: inputTextColor }
+                  ]}
                   value={editLocation}
                   onChangeText={setEditLocation}
                   placeholder={strings.logDetail.locationPlaceholder}
+                  placeholderTextColor={locationColor}
                 />
               </View>
             </>
           ) : (
             <>
-              <Text style={styles.title}>{log.title}</Text>
+              <Text style={[styles.title, { color: titleColor }]}>{log.title}</Text>
               {log.location ? (
                 <View style={styles.locationContainer}>
                   <Text style={styles.locationIcon}>📍</Text>
-                  <Text style={styles.location}>{log.location}</Text>
+                  <Text style={[styles.location, { color: locationColor }]}>{log.location}</Text>
                 </View>
               ) : null}
             </>
           )}
           
           <View style={styles.dateContainer}>
-            <Text style={styles.dateLabel}>{strings.logDetail.created}:</Text>
-            <Text style={styles.date}>{formatDate(log.createdAt)}</Text>
+            <Text style={[styles.dateLabel, { color: dateLabelColor }]}>{strings.logDetail.created}:</Text>
+            <Text style={[styles.date, { color: dateColor }]}>{formatDate(log.createdAt)}</Text>
           </View>
           
           {log.updatedAt !== log.createdAt && (
             <View style={styles.dateContainer}>
-              <Text style={styles.dateLabel}>{strings.logDetail.updated}:</Text>
-              <Text style={styles.date}>{formatDate(log.updatedAt)}</Text>
+              <Text style={[styles.dateLabel, { color: dateLabelColor }]}>{strings.logDetail.updated}:</Text>
+              <Text style={[styles.date, { color: dateColor }]}>{formatDate(log.updatedAt)}</Text>
             </View>
           )}
         </View>
 
-        <View style={styles.contentContainer}>
+        <View style={[styles.contentContainer, { backgroundColor: cardBg }]}>
           {isEditing ? (
             <TextInput
-              style={[styles.contentText, {backgroundColor: '#f1f5f9', minHeight: 120}]}
+              style={[
+                styles.contentText,
+                { backgroundColor: inputBg, color: inputTextColor, minHeight: 120 }
+              ]}
               value={editContent}
               onChangeText={setEditContent}
               placeholder={strings.logDetail.contentPlaceholder}
+              placeholderTextColor={locationColor}
               multiline
             />
           ) : (
-            <Text style={styles.contentText}>{log.content}</Text>
+            <Text style={[styles.contentText, { color: contentTextColor }]}>{log.content}</Text>
           )}
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: cardBg, borderTopColor: borderColor }]}>
         {isEditing ? (
           <>
             <TouchableOpacity
-              style={[styles.button, styles.shareButton]}
+              style={[styles.button, { backgroundColor: shareButtonBg }]}
               onPress={handleSaveEdit}
             >
-              <Text style={styles.shareButtonText}>{strings.logDetail.save}</Text>
+              <Text style={[styles.shareButtonText, { color: buttonTextColor }]}>{strings.logDetail.save}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, styles.deleteButton]}
+              style={[styles.button, { backgroundColor: deleteButtonBg }]}
               onPress={handleCancelEdit}
             >
-              <Text style={styles.deleteButtonText}>{strings.logDetail.cancelEdit}</Text>
+              <Text style={[styles.deleteButtonText, { color: buttonTextColor }]}>{strings.logDetail.cancelEdit}</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
             <TouchableOpacity
-              style={[styles.button, styles.shareButton]}
+              style={[styles.button, { backgroundColor: shareButtonBg }]}
               onPress={handleShare}
             >
-              <Text style={styles.shareButtonText}>{strings.logDetail.share}</Text>
+              <Text style={[styles.shareButtonText, { color: buttonTextColor }]}>{strings.logDetail.share}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
-              style={[styles.button, styles.editButton]}
+              style={[styles.button, { backgroundColor: editButtonBg }]}
               onPress={handleEdit}
             >
-              <Text style={styles.editButtonText}>{strings.logDetail.edit}</Text>
+              <Text style={[styles.editButtonText, { color: buttonTextColor }]}>{strings.logDetail.edit}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
-              style={[styles.button, styles.deleteButton]}
+              style={[styles.button, { backgroundColor: deleteButtonBg }]}
               onPress={handleDelete}
             >
-              <Text style={styles.deleteButtonText}>{strings.logDetail.delete}</Text>
+              <Text style={[styles.deleteButtonText, { color: buttonTextColor }]}>{strings.logDetail.delete}</Text>
             </TouchableOpacity>
           </>
         )}

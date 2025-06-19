@@ -15,6 +15,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LogStorage } from '../utils/LogStorage';
 import strings from '../utils/strings';
 import { Swipeable } from 'react-native-gesture-handler';
+import { useTheme } from '../context/ThemeContext'; // <-- add this
 
 const LogsListScreen = ({ navigation }) => {
   const [logs, setLogs] = useState([]);
@@ -22,6 +23,22 @@ const LogsListScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { darkMode } = useTheme(); // <-- use darkMode from ThemeContext
+
+  // Themed colors
+  const backgroundColor = darkMode ? '#1e293b' : '#f0f9ff';
+  const textColor = darkMode ? '#f1f5f9' : '#334155';
+  const inputBg = darkMode ? '#334155' : 'white';
+  const inputBorder = darkMode ? '#64748b' : '#cbd5e1';
+  const logItemBg = darkMode ? '#334155' : 'white';
+  const logItemBorder = darkMode ? '#475569' : '#e2e8f0';
+  const logTitleColor = darkMode ? '#f1f5f9' : '#1e293b';
+  const logLocationColor = darkMode ? '#cbd5e1' : '#64748b';
+  const logPreviewColor = darkMode ? '#e2e8f0' : '#475569';
+  const logDateColor = darkMode ? '#94a3b8' : '#94a3b8';
+  const emptyStateTextColor = darkMode ? '#cbd5e1' : '#64748b';
+  const emptyStateSubtextColor = darkMode ? '#94a3b8' : '#94a3b8';
+  const fabBg = darkMode ? '#0ea5e9' : '#075985';
 
   // Load logs when screen comes into focus
   useFocusEffect(
@@ -95,19 +112,19 @@ const LogsListScreen = ({ navigation }) => {
 
   const renderLogItem = ({ item }) => (
     <Swipeable renderRightActions={() => renderRightActions(item)}>
-      <View style={styles.logItem}>
+      <View style={[styles.logItem, { backgroundColor: logItemBg, borderColor: logItemBorder }]}>
         <TouchableOpacity
           style={styles.logContent}
           onPress={() => navigation.navigate('LogDetail', { logId: item.id })}
         >
-          <Text style={styles.logTitle}>{item.title}</Text>
+          <Text style={[styles.logTitle, { color: logTitleColor }]}>{item.title}</Text>
           {item.location ? (
-            <Text style={styles.logLocation}>📍 {item.location}</Text>
+            <Text style={[styles.logLocation, { color: logLocationColor }]}>📍 {item.location}</Text>
           ) : null}
-          <Text style={styles.logPreview} numberOfLines={2}>
+          <Text style={[styles.logPreview, { color: logPreviewColor }]} numberOfLines={2}>
             {item.content}
           </Text>
-          <Text style={styles.logDate}>
+          <Text style={[styles.logDate, { color: logDateColor }]}>
             {formatDate(item.createdAt)}
           </Text>
         </TouchableOpacity>
@@ -126,8 +143,8 @@ const LogsListScreen = ({ navigation }) => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Text style={styles.emptyStateText}>{strings.logs.noLogs}</Text>
-      <Text style={styles.emptyStateSubtext}>
+      <Text style={[styles.emptyStateText, { color: emptyStateTextColor }]}>{strings.logs.noLogs}</Text>
+      <Text style={[styles.emptyStateSubtext, { color: emptyStateSubtextColor }]}>
         {searchQuery ? strings.logs.tryDifferentSearch : strings.logs.createFirstLog}
       </Text>
     </View>
@@ -135,20 +152,23 @@ const LogsListScreen = ({ navigation }) => {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#075985" />
-        <Text style={styles.loadingText}>{strings.logs.loading}</Text>
+      <View style={[styles.loadingContainer, { backgroundColor }]}>
+        <ActivityIndicator size="large" color={fabBg} />
+        <Text style={[styles.loadingText, { color: logLocationColor }]}>{strings.logs.loading}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <View style={styles.header}>
         <TextInput
-          style={styles.searchInput}
+          style={[
+            styles.searchInput,
+            { backgroundColor: inputBg, borderColor: inputBorder, color: textColor }
+          ]}
           placeholder={strings.logs.searchPlaceholder}
-          placeholderTextColor={styles.searchInput.placeholderTextColor}
+          placeholderTextColor={darkMode ? '#94a3b8' : '#94a3b8'}
           value={searchQuery}
           onChangeText={handleSearch}
         />
@@ -163,17 +183,17 @@ const LogsListScreen = ({ navigation }) => {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={onRefresh}
-            colors={['#075985']}
+            colors={[fabBg]}
           />
         }
         contentContainerStyle={filteredLogs.length === 0 ? styles.emptyContainer : null}
       />
-        <TouchableOpacity
-          style={styles.fab}
-          onPress={() => navigation.navigate('NewLog')}
-        >
-          <Text style={styles.fabText}>{strings.logs.fabAdd}</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: fabBg }]}
+        onPress={() => navigation.navigate('NewLog')}
+      >
+        <Text style={styles.fabText}>{strings.logs.fabAdd}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -300,7 +320,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#64748b',
   },
-    fab: {
+  fab: {
     position: 'absolute',
     width: 75,
     height: 75,
