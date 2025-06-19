@@ -27,16 +27,6 @@ const SettingsScreen = () => {
       <Text style={[styles.sectionTitle, { color: sectionTitleColor }]}>{strings.settings.appSettings}</Text>
       
       <View style={[styles.settingItem, { borderBottomColor: borderColor }]}>
-        <Text style={[styles.settingLabel, { color: textColor }]}>{strings.settings.notifications}</Text>
-        <Switch
-          value={notifications}
-          onValueChange={setNotifications}
-          trackColor={{ false: "#cbd5e1", true: "#0284c7" }}
-          thumbColor={notifications ? "#075985" : "#f4f4f5"}
-        />
-      </View>
-      
-      <View style={[styles.settingItem, { borderBottomColor: borderColor }]}>
         <Text style={[styles.settingLabel, { color: textColor }]}>Theme</Text>
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity
