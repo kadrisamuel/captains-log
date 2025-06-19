@@ -9,6 +9,8 @@ const SettingsScreen = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [locationTracking, setLocationTracking] = useState(true);
   
+  const buildType = __DEV__ ? 'Debug' : 'Release';
+
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>{strings.settings.appSettings}</Text>
@@ -52,6 +54,11 @@ const SettingsScreen = () => {
       <TouchableOpacity style={[styles.button, styles.dangerButton]}>
         <Text style={styles.buttonText}>{strings.settings.signOut}</Text>
       </TouchableOpacity>
+
+      <View style={styles.buildTypeContainer}>
+        <Text style={styles.buildTypeLabel}>Build:</Text>
+        <Text style={styles.buildTypeValue}>{buildType}</Text>
+      </View>
     </View>
   );
 };
@@ -96,7 +103,26 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '500',
-  }
+  },
+  buildTypeContainer: {
+    position: 'absolute',
+    bottom: 30,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buildTypeLabel: {
+    fontSize: 14,
+    color: '#64748b',
+    marginRight: 6,
+  },
+  buildTypeValue: {
+    fontSize: 14,
+    color: '#334155',
+    fontWeight: 'bold',
+  },
 });
 
 export default SettingsScreen;

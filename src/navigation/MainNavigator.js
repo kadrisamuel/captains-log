@@ -9,7 +9,7 @@ import { View, Text } from 'react-native';
 import LogsScreen from '../screens/LogsScreen';
 import LogDetailScreen from '../screens/LogDetailScreen';
 import NewLogScreen from '../screens/NewLogScreen';
-// import SettingsScreen from '../screens/SettingsScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 // Simple icon component (replace with your icons later)
 const Icon = ({ name }) => (
@@ -58,14 +58,14 @@ const BottomTabNavigator = () => {
           headerTitle: "All Logs",
         }}
       />
-{/*       <Tab.Screen 
+      <Tab.Screen 
         name="Settings" 
         component={SettingsScreen}
         options={{
           tabBarIcon: ({ color }) => <Icon name="Settings" color={color} />,
           headerTitle: "Settings",
         }}
-      /> */}
+      />
     </Tab.Navigator>
   );
 };
@@ -99,11 +99,11 @@ const MainNavigator = () => {
         component={NewLogScreen} 
         options={{ title: "New Log Entry" }} 
       />
-{/*       <Stack.Screen 
+      <Stack.Screen 
         name="Settings" 
         component={SettingsScreen} 
         options={{ title: "Settings" }} 
-      /> */}
+      /> 
     </Stack.Navigator>
   );
 };
