@@ -3,6 +3,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'react-native';
 import MainNavigator from './navigation/MainNavigator';
+import { ThemeProvider } from './context/ThemeContext';
+import { GeolocationProvider } from './context/GeolocationContext';
 
 const linking = {
   prefixes: ['captainslog://'],
@@ -21,10 +23,14 @@ const linking = {
 
 const App = () => {
   return (
-    <NavigationContainer linking={linking}>
-      <StatusBar barStyle="dark-content" />
-      <MainNavigator />
-    </NavigationContainer>
+    <ThemeProvider>
+      <GeolocationProvider>
+        <NavigationContainer linking={linking}>
+          <StatusBar barStyle="dark-content" />
+          <MainNavigator />
+        </NavigationContainer>
+      </GeolocationProvider>
+    </ThemeProvider>
   );
 };
 
