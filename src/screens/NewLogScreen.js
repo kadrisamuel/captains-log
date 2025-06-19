@@ -16,6 +16,7 @@ import { LogStorage } from '../utils/LogStorage';
 import SpeechToText from '../utils/SpeechToText';
 import Geolocation from 'react-native-geolocation-service';
 import strings from '../utils/strings';
+import { useGeolocation } from '../context/GeolocationContext'; // <-- add this
 
 
 const NewLogScreen = ({ navigation, route }) => {
@@ -24,6 +25,7 @@ const NewLogScreen = ({ navigation, route }) => {
   const [content, setContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const { geolocationEnabled } = useGeolocation(); // <-- use context
 
   const onSpeechResults = (results) => {
     // Join all recognized phrases with a space (or any separator you prefer)
@@ -113,47 +115,50 @@ const NewLogScreen = ({ navigation, route }) => {
       startRecording();
     }
 
-    Geolocation.requestAuthorization('whenInUse').then((result) => {
-      if (result === 'granted' || result === true) {
-        Geolocation.getCurrentPosition(
-          async position => {
-            const { latitude, longitude } = position.coords;
-            try {
-              const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-              );
-              const data = await response.json();
-              // Try to get city, town, or village from the address
-              const address = data.address || {};
-              const city =
-                address.city ||
-                address.town ||
-                address.village ||
-                address.hamlet ||
-                address.state ||
-                address.county ||
-                data.display_name || // fallback to display_name
-                `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-              setLocation(city);
-            } catch (err) {
-              setLocation(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
-              console.log('Reverse geocoding error:', err);
-            }
-          },
-          error => {
-            console.log('Geolocation error:', error);
-          },
-          { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
-        );
-      }
-    });
+    // Only request geolocation if enabled
+    if (geolocationEnabled) {
+      Geolocation.requestAuthorization('whenInUse').then((result) => {
+        if (result === 'granted' || result === true) {
+          Geolocation.getCurrentPosition(
+            async position => {
+              const { latitude, longitude } = position.coords;
+              try {
+                const response = await fetch(
+                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+                );
+                const data = await response.json();
+                // Try to get city, town, or village from the address
+                const address = data.address || {};
+                const city =
+                  address.city ||
+                  address.town ||
+                  address.village ||
+                  address.hamlet ||
+                  address.state ||
+                  address.county ||
+                  data.display_name || // fallback to display_name
+                  `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+                setLocation(city);
+              } catch (err) {
+                setLocation(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
+                console.log('Reverse geocoding error:', err);
+              }
+            },
+            error => {
+              console.log('Geolocation error:', error);
+            },
+            { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
+          );
+        }
+      });
+    }
 
     SpeechToText.reset();
 
     return () => {
       SpeechToText.destroy();
     };
-  }, []);
+  }, [geolocationEnabled]);
 
   return (
     <KeyboardAvoidingView 

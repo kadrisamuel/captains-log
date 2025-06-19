@@ -1,14 +1,15 @@
 // src/screens/SettingsScreen.js
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 import strings from '../utils/strings';
-
+import { useGeolocation } from '../context/GeolocationContext'; // <-- add this
 
 const SettingsScreen = () => {
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [locationTracking, setLocationTracking] = useState(true);
-  
+  const { darkMode, setDarkMode } = useTheme(); // use context
+  const { geolocationEnabled, setGeolocationEnabled } = useGeolocation(); // <-- use context
+
   const buildType = __DEV__ ? 'Debug' : 'Release';
 
   return (
@@ -38,10 +39,10 @@ const SettingsScreen = () => {
       <View style={styles.settingItem}>
         <Text style={styles.settingLabel}>{strings.settings.locationTracking}</Text>
         <Switch
-          value={locationTracking}
-          onValueChange={setLocationTracking}
+          value={geolocationEnabled}
+          onValueChange={setGeolocationEnabled}
           trackColor={{ false: "#cbd5e1", true: "#0284c7" }}
-          thumbColor={locationTracking ? "#075985" : "#f4f4f5"}
+          thumbColor={geolocationEnabled ? "#075985" : "#f4f4f5"}
         />
       </View>
       
@@ -51,10 +52,10 @@ const SettingsScreen = () => {
         <Text style={styles.buttonText}>{strings.settings.exportLogData}</Text>
       </TouchableOpacity>
       
-      <TouchableOpacity style={[styles.button, styles.dangerButton]}>
+{/*       <TouchableOpacity style={[styles.button, styles.dangerButton]}>
         <Text style={styles.buttonText}>{strings.settings.signOut}</Text>
       </TouchableOpacity>
-
+ */}
       <View style={styles.buildTypeContainer}>
         <Text style={styles.buildTypeLabel}>Build:</Text>
         <Text style={styles.buildTypeValue}>{buildType}</Text>
