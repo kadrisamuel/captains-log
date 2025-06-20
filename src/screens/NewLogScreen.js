@@ -25,6 +25,7 @@ const NewLogScreen = ({ navigation, route }) => {
   const [content, setContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [titleFieldWidth, setTitleFieldWidth] = useState(0);
   const { geolocationEnabled } = useGeolocation();
   const { darkMode } = useTheme(); // <-- use darkMode from ThemeContext
 
@@ -83,7 +84,13 @@ const NewLogScreen = ({ navigation, route }) => {
       await stopRecording();
     }
 
-    // If title is empty, set it as the first 20 characters of content + "..." if needed
+    // Estimate max chars: width / (fontSize * 0.6) is a good heuristic for average char width
+    const fontSize = styles.input.fontSize || 16;
+    const avgCharWidth = fontSize * 0.6;
+    const maxTitleChars = titleFieldWidth
+      ? Math.floor(titleFieldWidth / avgCharWidth)
+      : 30; // fallback if width not measured
+
     let trimmedTitle = title.trim();
     const trimmedContent = content.trim();
 
@@ -93,9 +100,11 @@ const NewLogScreen = ({ navigation, route }) => {
     }
 
     if (!trimmedTitle) {
-      trimmedTitle = trimmedContent.length > 20
-        ? trimmedContent.substring(0, 20) + '...'
+      trimmedTitle = trimmedContent.length > maxTitleChars
+        ? trimmedContent.substring(0, maxTitleChars - 3) + '...'
         : trimmedContent;
+    } else if (trimmedTitle.length > maxTitleChars) {
+      trimmedTitle = trimmedTitle.substring(0, maxTitleChars - 3) + '...';
     }
 
     setIsSaving(true);
@@ -190,6 +199,7 @@ const NewLogScreen = ({ navigation, route }) => {
             placeholder={strings.newLog.titlePlaceholder}
             placeholderTextColor={darkMode ? '#94a3b8' : '#64748b'}
             editable={!isSaving}
+            onLayout={e => setTitleFieldWidth(e.nativeEvent.layout.width)}
           />
         </View>
         
