@@ -1,9 +1,11 @@
 // src/screens/SettingsScreen.js
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, Share, Alert } from 'react-native';
+import RNFS from 'react-native-fs';
 import { useTheme } from '../context/ThemeContext';
 import strings from '../utils/strings';
 import { useGeolocation } from '../context/GeolocationContext';
+import { LogStorage } from '../utils/LogStorage'; // <-- import your log storage
 
 const SettingsScreen = () => {
   const [notifications, setNotifications] = useState(true);
@@ -21,6 +23,23 @@ const SettingsScreen = () => {
   const buttonTextColor = '#fff';
   const buildTypeLabelColor = darkMode ? '#cbd5e1' : '#64748b';
   const buildTypeValueColor = darkMode ? '#f1f5f9' : '#334155';
+
+  // Export logs as JSON and share
+  const exportLogs = async () => {
+    try {
+      const logs = await LogStorage.getAllLogs(); // Adjust this to your actual method
+      const json = JSON.stringify(logs, null, 2);
+      const path = `${RNFS.DocumentDirectoryPath}/captainslog-export.json`;
+      await RNFS.writeFile(path, json, 'utf8');
+      await Share.share({
+        url: 'file://' + path,
+        //message: 'Captain\'s Log export',
+        //title: 'Exported Logs',
+      });
+    } catch (e) {
+      Alert.alert('Export failed', e.message || 'Could not export logs.');
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -71,13 +90,14 @@ const SettingsScreen = () => {
       
       <Text style={[styles.sectionTitle, { color: sectionTitleColor }]}>{strings.settings.account}</Text>
       
-      <TouchableOpacity style={[styles.button, { backgroundColor: buttonBg }]}>
-        <Text style={[styles.buttonText, { color: buttonTextColor }]}>{strings.settings.exportLogData}</Text>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: buttonBg }]}
+        onPress={exportLogs}
+      >
+        <Text style={[styles.buttonText, { color: buttonTextColor }]}>
+          {strings.settings.exportLogData || 'Export Log Data'}
+        </Text>
       </TouchableOpacity>
-      
-      {/* <TouchableOpacity style={[styles.button, styles.dangerButton]}>
-        <Text style={styles.buttonText}>{strings.settings.signOut}</Text>
-      </TouchableOpacity> */}
       
       <View style={styles.buildTypeContainer}>
         <Text style={[styles.buildTypeLabel, { color: buildTypeLabelColor }]}>Build:</Text>
