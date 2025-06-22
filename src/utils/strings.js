@@ -23,7 +23,7 @@ const strings = {
     locationPlaceholder: "Freeform text",
     contentLabel: "Log Entry *",
     contentPlaceholder: "Write your log entry here...",
-    saveButton: "Save Log Entry",
+    saveButton: "Save",
     saving: "Saving...",
     record: "Record",
     stop: "Stop",

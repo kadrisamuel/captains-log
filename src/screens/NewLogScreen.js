@@ -1,5 +1,5 @@
 // src/screens/NewLogScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -18,6 +18,7 @@ import Geolocation from 'react-native-geolocation-service';
 import strings from '../utils/strings';
 import { useGeolocation } from '../context/GeolocationContext';
 import { useTheme } from '../context/ThemeContext'; // <-- import useTheme to access darkMode
+import { Ionicons } from '@expo/vector-icons'; // or use any icon library you use
 
 const NewLogScreen = ({ navigation, route }) => {
   const [title, setTitle] = useState('');
@@ -180,6 +181,33 @@ const NewLogScreen = ({ navigation, route }) => {
       SpeechToText.destroy();
     };
   }, [geolocationEnabled]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={saveLog}
+          disabled={isSaving}
+          style={{
+            marginRight: 16,
+            opacity: isSaving ? 0.5 : 1,
+            padding: 6,
+            height: 36,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{
+            color: '#0ea5e9',
+            fontWeight: 'bold',
+            fontSize: 16,
+          }}>
+            {strings.newLog.saveButton}
+          </Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, saveLog, isSaving, darkMode, strings.newLog.saveButton]);
 
   return (
     <KeyboardAvoidingView 
