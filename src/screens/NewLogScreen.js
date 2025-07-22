@@ -95,19 +95,6 @@ const NewLogScreen = ({ navigation, route }) => {
     let trimmedTitle = title.trim();
     const trimmedContent = content.trim();
 
-    if (!trimmedContent) {
-      Alert.alert(strings.newLog.error, strings.newLog.emptyContentError);
-      return;
-    }
-
-    if (!trimmedTitle) {
-      trimmedTitle = trimmedContent.length > maxTitleChars
-        ? trimmedContent.substring(0, maxTitleChars - 3) + '...'
-        : trimmedContent;
-    } else if (trimmedTitle.length > maxTitleChars) {
-      trimmedTitle = trimmedTitle.substring(0, maxTitleChars - 3) + '...';
-    }
-
     setIsSaving(true);
 
     try {
