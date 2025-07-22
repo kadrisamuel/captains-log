@@ -5,7 +5,7 @@ import RNFS from 'react-native-fs';
 import { useTheme } from '../context/ThemeContext';
 import strings from '../utils/strings';
 import { useGeolocation } from '../context/GeolocationContext';
-import { LogStorage } from '../utils/LogStorage'; // <-- import your log storage
+import { LogStorage } from '../utils/LogStorage'; 
 import DeviceInfo from 'react-native-device-info';
 
 const SettingsScreen = () => {
