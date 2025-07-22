@@ -6,6 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import strings from '../utils/strings';
 import { useGeolocation } from '../context/GeolocationContext';
 import { LogStorage } from '../utils/LogStorage'; // <-- import your log storage
+import DeviceInfo from 'react-native-device-info';
 
 const SettingsScreen = () => {
   const [notifications, setNotifications] = useState(true);
@@ -13,6 +14,7 @@ const SettingsScreen = () => {
   const { geolocationEnabled, setGeolocationEnabled } = useGeolocation();
 
   const buildType = __DEV__ ? 'Debug' : 'Release';
+  const buildNumber = DeviceInfo.getVersion(); // or getBuildNumber()
 
   // Define themed colors
   const backgroundColor = darkMode ? '#1e293b' : '#f0f9ff';
@@ -101,7 +103,9 @@ const SettingsScreen = () => {
       
       <View style={styles.buildTypeContainer}>
         <Text style={[styles.buildTypeLabel, { color: buildTypeLabelColor }]}>Build:</Text>
-        <Text style={[styles.buildTypeValue, { color: buildTypeValueColor }]}>{buildType}</Text>
+        <Text style={[styles.buildTypeValue, { color: buildTypeValueColor }]}>
+          {buildType} ({buildNumber})
+        </Text>
       </View>
     </View>
   );
