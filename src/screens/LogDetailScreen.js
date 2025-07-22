@@ -42,10 +42,31 @@ const LogDetailScreen = ({ route, navigation }) => {
   const errorTextColor = '#ef4444';
   const inputBg = darkMode ? '#475569' : '#f1f5f9';
   const inputTextColor = darkMode ? '#f1f5f9' : '#334155';
+  const headerSaveButtonColor = '#f1f5f9';
 
   useEffect(() => {
     loadLog();
   }, [logId]);
+
+  useEffect(() => {
+    if (isEditing) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={handleSaveEdit} style={{ marginRight: 16 }}>
+            <Text style={{
+  color: headerSaveButtonColor,
+  fontWeight: 'bold',
+  fontSize: 16,
+}}>
+  {strings.logDetail.save}
+</Text>
+          </TouchableOpacity>
+        ),
+      });
+    } else {
+      navigation.setOptions({ headerRight: undefined });
+    }
+  }, [isEditing, editTitle, editLocation, editContent]);
 
   const loadLog = async () => {
     try {
