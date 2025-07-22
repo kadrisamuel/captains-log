@@ -37,9 +37,10 @@ const NewLogScreen = ({ navigation, route }) => {
   const inputBg = darkMode ? '#334155' : 'white';
   const inputBorder = darkMode ? '#64748b' : '#cbd5e1';
   const buttonBg = darkMode ? '#0ea5e9' : '#075985';
-  const buttonTextColor = '#fff';
   const recordButtonBg = '#ef4444';
   const recordButtonDisabledBg = '#94a3b8';
+  const headerSaveButtonColor = darkMode ? '#0ea5e9' : '#075985';
+  const placeholderTextColor = darkMode ? '#94a3b8' : '#64748b';
 
   const onSpeechResults = (results) => {
     // Join all recognized phrases with a space (or any separator you prefer)
@@ -206,7 +207,7 @@ const NewLogScreen = ({ navigation, route }) => {
           }}
         >
           <Text style={{
-            color: '#0ea5e9',
+            color: headerSaveButtonColor,
             fontWeight: 'bold',
             fontSize: 16,
           }}>
@@ -233,7 +234,7 @@ const NewLogScreen = ({ navigation, route }) => {
             value={title}
             onChangeText={setTitle}
             placeholder={strings.newLog.titlePlaceholder}
-            placeholderTextColor={darkMode ? '#94a3b8' : '#64748b'}
+            placeholderTextColor={placeholderTextColor}
             editable={!isSaving}
             onLayout={e => setTitleFieldWidth(e.nativeEvent.layout.width)}
           />
@@ -250,7 +251,7 @@ const NewLogScreen = ({ navigation, route }) => {
               value={location}
               onChangeText={setLocation}
               placeholder={strings.newLog.locationPlaceholder}
-              placeholderTextColor={darkMode ? '#94a3b8' : '#64748b'}
+              placeholderTextColor={placeholderTextColor}
               editable={!isSaving}
             />
           </View>
@@ -266,7 +267,7 @@ const NewLogScreen = ({ navigation, route }) => {
             value={content}
             onChangeText={setContent}
             placeholder={strings.newLog.contentPlaceholder}
-            placeholderTextColor={darkMode ? '#94a3b8' : '#64748b'}
+            placeholderTextColor={placeholderTextColor}
             multiline
             numberOfLines={10}
             textAlignVertical="top"
