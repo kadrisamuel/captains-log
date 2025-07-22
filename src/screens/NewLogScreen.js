@@ -181,6 +181,19 @@ const NewLogScreen = ({ navigation, route }) => {
     };
   }, [geolocationEnabled]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', async (e) => {
+      if (isRecording) {
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+        await stopRecording();
+        // Now allow navigation to proceed
+        navigation.dispatch(e.data.action);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, isRecording]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
