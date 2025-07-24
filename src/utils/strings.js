@@ -34,9 +34,11 @@ const strings = {
     error: "Error",
   },
   logDetail: {
+    locationLabel: "Location: ",
     loading: "Loading log...",
     notFound: "Log not found",
-    error: "Error",
+    error: "Error: ",
+    errorSharing: "Error sharing log: ",
     failedToLoad: "Failed to load log",
     deleteTitle: "Delete Log",
     deleteMessage: (title) => `Are you sure you want to delete "${title}"?`,

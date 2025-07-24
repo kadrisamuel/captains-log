@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { LogStorage } from '../utils/LogStorage';
 import strings from '../utils/strings';
-import { useTheme } from '../context/ThemeContext'; // <-- add this
+import { useTheme } from '../context/ThemeContext';
 
 const LogDetailScreen = ({ route, navigation }) => {
   const { logId } = route.params;
@@ -83,7 +83,7 @@ const LogDetailScreen = ({ route, navigation }) => {
         );
       }
     } catch (error) {
-      console.error('Error loading log:', error);
+      console.error(strings.logDetail.error, error);
       // Failed to load alert
       Alert.alert(strings.logDetail.error, strings.logDetail.failedToLoad);
     } finally {
@@ -116,17 +116,17 @@ const LogDetailScreen = ({ route, navigation }) => {
       ]
     );
   };
-  // TODO: Implement share functionality with some reasonable data structure
+
   const handleShare = async () => {
     try {
-      const shareContent = `${log.title}\n\n${log.location ? `Location: ${log.location}\n\n` : ''}${log.content}\n\nCreated: ${formatDate(log.createdAt)}`;
+      const shareContent = `${log.title}\n\n${log.location ? `${strings.logDetail.locationLabel}${log.location}\n\n` : ''}${log.content}\n\n${strings.logDetail.created} ${formatDate(log.createdAt)}`;
       
       await Share.share({
         message: shareContent,
         title: log.title,
       });
     } catch (error) {
-      console.error('Error sharing log:', error);
+      console.error(strings.logDetail.errorSharing, error);
     }
   };
 
@@ -162,6 +162,7 @@ const LogDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  // TODO: dynamically localize date format
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -233,13 +234,13 @@ const LogDetailScreen = ({ route, navigation }) => {
           )}
           
           <View style={styles.dateContainer}>
-            <Text style={[styles.dateLabel, { color: dateLabelColor }]}>{strings.logDetail.created}:</Text>
+            <Text style={[styles.dateLabel, { color: dateLabelColor }]}>{strings.logDetail.created}</Text>
             <Text style={[styles.date, { color: dateColor }]}>{formatDate(log.createdAt)}</Text>
           </View>
           
           {log.updatedAt !== log.createdAt && (
             <View style={styles.dateContainer}>
-              <Text style={[styles.dateLabel, { color: dateLabelColor }]}>{strings.logDetail.updated}:</Text>
+              <Text style={[styles.dateLabel, { color: dateLabelColor }]}>{strings.logDetail.updated}</Text>
               <Text style={[styles.date, { color: dateColor }]}>{formatDate(log.updatedAt)}</Text>
             </View>
           )}
