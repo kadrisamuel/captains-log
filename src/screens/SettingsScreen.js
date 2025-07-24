@@ -13,7 +13,7 @@ const SettingsScreen = () => {
   const { darkMode, themeMode, setThemeMode } = useTheme();
   const { geolocationEnabled, setGeolocationEnabled } = useGeolocation();
 
-  const buildType = __DEV__ ? 'Debug' : 'Release';
+  const buildType = __DEV__ ? strings.settings.debug : strings.settings.release; 
   const buildNumber = DeviceInfo.getVersion(); // or getBuildNumber()
 
   // Define themed colors
@@ -39,7 +39,7 @@ const SettingsScreen = () => {
         //title: 'Exported Logs',
       });
     } catch (e) {
-      Alert.alert('Export failed', e.message || 'Could not export logs.');
+      Alert.alert(strings.settings.exportFailed, e.message || 'Could not export logs.');
     }
   };
 
@@ -57,7 +57,7 @@ const SettingsScreen = () => {
             ]}
             onPress={() => setThemeMode('system')}
           >
-            <Text style={{ color: textColor }}>System</Text>
+            <Text style={{ color: textColor }}>{strings.settings.systemTheme}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -66,7 +66,7 @@ const SettingsScreen = () => {
             ]}
             onPress={() => setThemeMode('light')}
           >
-            <Text style={{ color: textColor }}>Light</Text>
+            <Text style={{ color: textColor }}>{strings.settings.lightTheme}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -75,7 +75,7 @@ const SettingsScreen = () => {
             ]}
             onPress={() => setThemeMode('dark')}
           >
-            <Text style={{ color: textColor }}>Dark</Text>
+            <Text style={{ color: textColor }}>{strings.settings.darkTheme}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -102,7 +102,7 @@ const SettingsScreen = () => {
       </TouchableOpacity>
       
       <View style={styles.buildTypeContainer}>
-        <Text style={[styles.buildTypeLabel, { color: buildTypeLabelColor }]}>Build:</Text>
+        <Text style={[styles.buildTypeLabel, { color: buildTypeLabelColor }]}>{strings.settings.build}</Text>
         <Text style={[styles.buildTypeValue, { color: buildTypeValueColor }]}>
           {buildType} ({buildNumber})
         </Text>
