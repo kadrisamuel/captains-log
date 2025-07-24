@@ -39,7 +39,7 @@ const NewLogScreen = ({ navigation, route }) => {
   const buttonBg = darkMode ? '#0ea5e9' : '#075985';
   const recordButtonBg = '#ef4444';
   const recordButtonDisabledBg = '#94a3b8';
-  const headerSaveButtonColor = darkMode ? '#0ea5e9' : '#075985';
+  const headerSaveButtonColor = '#f1f5f9';
   const placeholderTextColor = darkMode ? '#94a3b8' : '#64748b';
 
   const onSpeechResults = (results) => {
