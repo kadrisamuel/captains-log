@@ -223,12 +223,16 @@ const LogDetailScreen = ({ route, navigation }) => {
             </>
           ) : (
             <>
-              <Text style={[styles.title, { color: titleColor }]}>{log.title}</Text>
+              <TouchableOpacity onPress={handleEdit} activeOpacity={0.7}>
+                <Text style={[styles.title, { color: titleColor }]}>{log.title}</Text>
+              </TouchableOpacity>
               {log.location ? (
-                <View style={styles.locationContainer}>
-                  <Text style={styles.locationIcon}>📍</Text>
-                  <Text style={[styles.location, { color: locationColor }]}>{log.location}</Text>
-                </View>
+                <TouchableOpacity onPress={handleEdit} activeOpacity={0.7}>
+                  <View style={styles.locationContainer}>
+                    <Text style={styles.locationIcon}>📍</Text>
+                    <Text style={[styles.location, { color: locationColor }]}>{log.location}</Text>
+                  </View>
+                </TouchableOpacity>
               ) : null}
             </>
           )}
@@ -260,7 +264,9 @@ const LogDetailScreen = ({ route, navigation }) => {
               multiline
             />
           ) : (
-            <Text style={[styles.contentText, { color: contentTextColor }]}>{log.content}</Text>
+            <TouchableOpacity onPress={handleEdit} activeOpacity={0.7}>
+              <Text style={[styles.contentText, { color: contentTextColor }]}>{log.content}</Text>
+            </TouchableOpacity>
           )}
         </View>
       </ScrollView>
