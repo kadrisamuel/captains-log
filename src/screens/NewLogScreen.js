@@ -120,7 +120,7 @@ const NewLogScreen = ({ navigation, route }) => {
       setContent('');
       navigation.goBack();
     } catch (error) {
-      Alert.alert('Error', strings.newLog.savingError);
+      Alert.alert(strings.newLog.error, strings.newLog.savingError);
       console.error('Save log error:', error);
     } finally {
       setIsSaving(false);
