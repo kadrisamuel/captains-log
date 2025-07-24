@@ -61,10 +61,8 @@ const strings = {
   },
   settings: {
     appSettings: "App Settings",
-    notifications: "Push Notifications",
     darkMode: "Dark Mode",
     locationTracking: "Location Tracking",
-    account: "Account",
     exportLogData: "Export Log Data",
     build: "Build:",
     exportFailed: "Export failed",
